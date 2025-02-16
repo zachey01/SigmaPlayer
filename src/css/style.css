@@ -1,0 +1,451 @@
+#sigma__video-wrapper {
+    --background-color: #000;
+    --control-bg: rgba(0, 0, 0, 0.6);
+    --control-color: #fff;
+    --progress-color: #fff;
+    --buffer-color: rgba(255, 255, 255, 0.3);
+    --spinner-color: #fff;
+    --play-button-size: 60px;
+    --seek-tooltip-bg: rgba(0, 0, 0, 0.7);
+    --tooltip-text-color: #fff;
+    --icon-color: #fff; /* Цвет для SVG иконок */
+
+    -webkit-overflow-scrolling: touch;
+    font-family: -apple-system, BlinkMacSystemFont, 'San Francisco',
+        'Helvetica Neue', Helvetica, Arial, sans-serif;
+    user-select: none;
+    box-sizing: border-box;
+    position: relative;
+    width: 100%;
+    height: auto;
+    line-height: 0;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    background: #000;
+}
+
+/* Поддержка fullscreen */
+#sigma__video-wrapper:fullscreen,
+#sigma__video-wrapper:-webkit-full-screen,
+#sigma__video-wrapper:-ms-fullscreen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#sigma__video-wrapper video {
+    width: 100%;
+    max-height: 100%;
+    border-radius: 10px;
+}
+/* Правило для всех SVG-иконок */
+.sigma__icon {
+    fill: var(--icon-color);
+    stroke: var(--icon-color);
+}
+
+#sigma__video-wrapper:fullscreen video,
+#sigma__video-wrapper:-webkit-full-screen video,
+#sigma__video-wrapper:-ms-fullscreen video {
+    width: auto;
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+    margin: auto;
+}
+
+/* Анимация спиннера */
+.sigma__spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 50px;
+    height: 50px;
+    margin: -25px 0 0 -25px;
+    border: 5px solid rgba(255, 255, 255, 0.3);
+    border-top: 5px solid var(--spinner-color);
+    border-radius: 50%;
+    animation: sigma__spin 1s linear infinite;
+    display: none;
+    z-index: 5;
+}
+
+@keyframes sigma__spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Центральная кнопка воспроизведения в стиле iOS */
+.sigma__central-play-button {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: var(--play-button-size);
+    height: var(--play-button-size);
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+
+    background-color: var(--control-bg);
+    backdrop-filter: blur(10px);
+}
+
+.sigma__central-play-button svg {
+    height: 70px;
+    width: 70px;
+}
+
+.sigma__central-play-button:active {
+    transform: translate(-50%, -50%) scale(0.95);
+}
+
+/* Подсказка времени при перемотке */
+.sigma__seek-tooltip {
+    position: absolute;
+    padding: 8px 12px;
+    background-color: rgba(60, 60, 60, 0.8);
+    color: var(--tooltip-text-color);
+    border-radius: 8px;
+    font-size: 13px;
+    pointer-events: none;
+    transform: translate(-50%, -150%);
+    white-space: nowrap;
+    display: none;
+    z-index: 5;
+}
+
+/* Панель управления */
+.sigma__control-wrapper {
+    width: calc(100% - 12px);
+    margin: 6px;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+}
+
+#sigma__controls-wrapper {
+    transition: opacity 0.3s;
+}
+
+.sigma__hide-controls {
+    opacity: 0;
+}
+
+.sigma__controlsInner {
+    transition: transform 0.3s;
+    transform: translateY(0);
+}
+
+.sigma__hide-controls .sigma__controlsInner {
+    transform: translateY(30px);
+}
+
+.sigma__controls {
+    position: relative;
+    border-radius: 12px;
+    max-width: 800px;
+    width: 100%;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    color: var(--control-color);
+    padding: 10px 20px;
+    transform: translateZ(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.sigma__controls::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--control-bg);
+    backdrop-filter: blur(20px);
+    border-radius: 12px;
+    z-index: -1;
+}
+
+.sigma__controls svg,
+.sigma__controls i {
+    height: 20px;
+    filter: invert(1);
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.sigma__controls button {
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    padding: 0;
+    transition: transform 0.1s;
+}
+
+.sigma__controls button:active {
+    transform: scale(0.95);
+}
+
+/* Стили для Play/Pause */
+#sigma__play-pause .sigma__playIcon {
+    display: block;
+}
+
+#sigma__play-pause .sigma__pauseIcon {
+    display: none;
+}
+
+#sigma__play-pause.sigma__isPlaying .sigma__playIcon {
+    display: none;
+}
+
+#sigma__play-pause.sigma__isPlaying .sigma__pauseIcon {
+    display: block;
+}
+
+/* Стили для громкости */
+#sigma__mute .sigma__muteIcon {
+    display: block;
+}
+
+#sigma__mute .sigma__volumeIcon {
+    display: none;
+}
+
+#sigma__mute.sigma__isMute .sigma__muteIcon {
+    display: none;
+}
+
+#sigma__mute.sigma__isMute .sigma__volumeIcon {
+    display: block;
+}
+
+/* Стили для полноэкранного режима */
+#sigma__full-screen .sigma__fullscreenIcon {
+    display: block;
+}
+
+#sigma__full-screen .sigma__minimiseIcon {
+    display: none;
+}
+
+#sigma__full-screen.sigma__isFullscreen .sigma__fullscreenIcon {
+    display: none;
+}
+
+#sigma__full-screen.sigma__isFullscreen .sigma__minimiseIcon {
+    display: block;
+}
+
+.sigma__timeline-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    position: relative;
+}
+
+.sigma__timeline-spacer {
+    width: 100%;
+    padding: 6px 0;
+    cursor: pointer;
+    position: relative;
+}
+
+.sigma__full-timeline {
+    position: relative;
+    width: 100%;
+    height: 3px;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+}
+
+.sigma__buffered {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: var(--buffer-color);
+    border-radius: 2px;
+    width: 0%;
+}
+
+#sigma__progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    border-radius: 2px;
+    background-color: var(--progress-color);
+    width: 0%;
+}
+
+#sigma__progress::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translate(50%, -50%);
+    width: 12px;
+    height: 12px;
+    background-color: var(--progress-color);
+    border-radius: 50%;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+}
+
+#sigma__current-time {
+    margin-left: 20px;
+    margin-right: 5px;
+}
+
+#sigma__duration {
+    margin-left: 5px;
+}
+
+/* Dropdown и меню настроек */
+.sigma__dropdown {
+    position: relative;
+}
+
+.sigma__dropdown-content {
+    display: none;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    position: absolute;
+    bottom: 40px;
+    right: 0;
+    border-radius: 10px;
+    padding: 10px;
+    z-index: 10;
+    min-width: 150px;
+}
+
+.sigma__dropdown-content::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--control-bg);
+    backdrop-filter: blur(20px);
+    border-radius: 10px;
+    z-index: -1;
+}
+
+.sigma__dropdown-content .sigma__dropdown-item {
+    padding: 15px 10px;
+    cursor: pointer;
+    position: relative;
+    border-radius: 8px;
+    transition: background 0.2s ease;
+}
+
+.sigma__dropdown-content .sigma__dropdown-item:hover,
+.sigma__dropdown-content .sigma__dropdown-item.active {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.sigma__dropdown.sigma__show .sigma__dropdown-content {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Подменю */
+.sigma__has-submenu .sigma__submenu {
+    display: none;
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    position: absolute;
+    bottom: 0;
+    right: 100%;
+    border-radius: 8px;
+    padding: 1px;
+    min-width: 150px;
+    z-index: 11;
+    background-color: var(--control-bg);
+    backdrop-filter: blur(20px);
+}
+
+.sigma__has-submenu:hover .sigma__submenu {
+    display: block;
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.sigma__submenu .sigma__dropdown-item {
+    padding: 15px 10px;
+}
+
+.sigma__speed-option.active,
+.sigma__dropdown-content .sigma__dropdown-item.active {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Volume Dropdown */
+.sigma__volume-container {
+    position: relative;
+}
+
+.sigma__volume-dropdown {
+    display: none;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: var(--control-bg);
+    backdrop-filter: blur(20px);
+    border-radius: 10px;
+    padding: 5px;
+    z-index: 10;
+}
+
+.sigma__volume-container.active .sigma__volume-dropdown {
+    display: block;
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+/* Стилизация вертикального слайдера */
+#sigma__volume-slider {
+    -webkit-appearance: slider-vertical;
+    writing-mode: vertical-lr;
+    direction: rtl;
+    width: 16px;
+    border: none;
+    accent-color: #fff;
+}
+
+/* Media Queries для телефонов */
+@media (max-width: 768px) {
+    .sigma__control-wrapper {
+        margin: 0;
+        width: 100%;
+    }
+    :root {
+        --play-button-size: 50px;
+    }
+
+    .sigma__controls svg,
+    .sigma__controls i {
+        height: 16px;
+    }
+}

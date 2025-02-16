@@ -1,0 +1,13 @@
+{
+    "dependencies": {
+        "autoprefixer": "^10.4.20",
+        "cssnano": "^7.0.6",
+        "gulp": "^5.0.0",
+        "gulp-babel": "^8.0.0",
+        "gulp-clean-css": "^4.3.0",
+        "gulp-concat": "^2.6.1",
+        "gulp-postcss": "^10.0.0",
+        "gulp-svg-sprite": "^2.0.3",
+        "gulp-terser": "^2.1.0"
+    }
+}
