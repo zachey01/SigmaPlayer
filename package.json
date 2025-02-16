@@ -1,5 +1,6 @@
 {
-    "dependencies": {
+    "type": "module",
+    "devDependencies": {
         "@babel/preset-env": "^7.26.9",
         "autoprefixer": "^10.4.20",
         "cssnano": "^7.0.6",
@@ -11,5 +12,17 @@
         "gulp-svg-sprite": "^2.0.3",
         "gulp-terser": "^2.1.0"
     },
-    "type": "module"
+    "author": "Zachey",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/zachey01/SigmaPlayer.git"
+    },
+    "bugs": {
+        "url": "https://github.com/zachey01/SigmaPlayer/issues"
+    },
+    "browserslist": "> 1%",
+    "scripts": {
+        "build": "gulp"
+    }
 }
