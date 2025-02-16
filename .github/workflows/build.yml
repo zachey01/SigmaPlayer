@@ -1,0 +1,45 @@
+name: Build with Bun and Gulp
+
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+        branches:
+            - main
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v3
+              with:
+                  node-version: '16'
+
+            - name: Install Bun
+              run: curl -fsSL https://bun.sh/install | bash
+
+            - name: Add Bun to PATH
+              run: echo "$HOME/.bun/bin" >> $GITHUB_PATH
+
+            - name: Install dependencies with Bun
+              run: bun install
+
+            - name: Install Gulp globally
+              run: npm install --global gulp-cli
+
+            - name: Run Gulp build
+              run: gulp build
+
+            - name: Commit changes
+              run: |
+                  git config --global user.name "github-actions"
+                  git config --global user.email "github-actions@users.noreply.github.com"
+                  git add .
+                  git commit -m "Automated commit from GitHub Actions"
+                  git push
