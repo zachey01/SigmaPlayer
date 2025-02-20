@@ -1,30 +1,38 @@
 SigmaPlayer.prototype.selectQuality = function (quality, store = true) {
     const currentTime = this.video.currentTime;
     this.showSpinner();
+
     if (this.autoQuality) {
         const sources = this.videoSources[this.selectedTranslation];
         const autoUrl = sources['auto'];
+
         if (!autoUrl) {
             console.warn('Sources are not available');
             this.hideSpinner();
             return;
         }
+
+        // Обработаем URL, удалив параметры
+        const cleanUrl = autoUrl.split('?')[0];
+
         if (!this.videoType) {
-            if (autoUrl.endsWith('.m3u8')) {
+            if (cleanUrl.endsWith('.m3u8')) {
                 this.videoType = 'hls';
-            } else if (autoUrl.endsWith('.mpd')) {
+            } else if (cleanUrl.endsWith('.mpd')) {
                 this.videoType = 'dash';
             } else {
                 this.videoType = 'mp4';
             }
         }
+
+        // Логика для HLS
         if (this.videoType === 'hls') {
             if (typeof Hls === 'undefined') {
                 console.warn('hls.js not available');
                 this.hideSpinner();
                 return;
             }
-            if (autoUrl.endsWith('.m3u8')) {
+            if (cleanUrl.endsWith('.m3u8')) {
                 if (this.hls) {
                     this.hls.destroy();
                     this.hls = null;
@@ -36,7 +44,7 @@ SigmaPlayer.prototype.selectQuality = function (quality, store = true) {
                 });
                 this.hls.attachMedia(this.video);
                 this.hls.on(Hls.Events.MEDIA_ATTACHED, () => {
-                    this.hls.loadSource(autoUrl);
+                    this.hls.loadSource(autoUrl); // Загружаем оригинальный URL с параметрами
                 });
                 this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
                     this.video.currentTime = currentTime;
@@ -54,13 +62,15 @@ SigmaPlayer.prototype.selectQuality = function (quality, store = true) {
                 });
                 this.hideSpinner();
             }
-        } else if (this.videoType === 'dash') {
+        }
+        // Логика для DASH
+        else if (this.videoType === 'dash') {
             if (typeof dashjs === 'undefined') {
                 console.warn('dash.js not available');
                 this.hideSpinner();
                 return;
             }
-            if (autoUrl.endsWith('.mpd')) {
+            if (cleanUrl.endsWith('.mpd')) {
                 if (this.dashPlayer) {
                     this.dashPlayer.reset();
                     this.dashPlayer = null;
@@ -108,32 +118,40 @@ SigmaPlayer.prototype.selectQuality = function (quality, store = true) {
             this.hideSpinner();
             return;
         }
+
         if (store) {
             this.selectedQuality = quality;
             this.storeQuality(quality);
         } else {
             this.selectedQuality = quality;
         }
+
         const urls =
             this.videoSources[this.selectedTranslation][this.selectedQuality];
         if (urls && urls.length > 0) {
             const selectedUrl = urls[0];
+
+            // Обработаем URL, удалив параметры
+            const cleanSelectedUrl = selectedUrl.split('?')[0];
+
             if (!this.videoType) {
-                if (selectedUrl.endsWith('.m3u8')) {
+                if (cleanSelectedUrl.endsWith('.m3u8')) {
                     this.videoType = 'hls';
-                } else if (selectedUrl.endsWith('.mpd')) {
+                } else if (cleanSelectedUrl.endsWith('.mpd')) {
                     this.videoType = 'dash';
                 } else {
                     this.videoType = 'mp4';
                 }
             }
+
+            // Логика для HLS
             if (this.videoType === 'hls') {
                 if (typeof Hls === 'undefined') {
                     console.warn('hls.js не найден');
                     this.hideSpinner();
                     return;
                 }
-                if (selectedUrl.endsWith('.m3u8')) {
+                if (cleanSelectedUrl.endsWith('.m3u8')) {
                     if (this.hls) {
                         this.hls.destroy();
                         this.hls = null;
@@ -145,7 +163,7 @@ SigmaPlayer.prototype.selectQuality = function (quality, store = true) {
                     });
                     this.hls.attachMedia(this.video);
                     this.hls.on(Hls.Events.MEDIA_ATTACHED, () => {
-                        this.hls.loadSource(selectedUrl);
+                        this.hls.loadSource(selectedUrl); // Загружаем оригинальный URL с параметрами
                     });
                     this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
                         this.video.currentTime = currentTime;
@@ -163,13 +181,15 @@ SigmaPlayer.prototype.selectQuality = function (quality, store = true) {
                     });
                     this.hideSpinner();
                 }
-            } else if (this.videoType === 'dash') {
+            }
+            // Логика для DASH
+            else if (this.videoType === 'dash') {
                 if (typeof dashjs === 'undefined') {
                     console.warn('dash.js не найден');
                     this.hideSpinner();
                     return;
                 }
-                if (selectedUrl.endsWith('.mpd')) {
+                if (cleanSelectedUrl.endsWith('.mpd')) {
                     if (this.dashPlayer) {
                         this.dashPlayer.reset();
                         this.dashPlayer = null;
@@ -254,6 +274,7 @@ SigmaPlayer.prototype.populateTranslationOptions = function () {
     const translationDropdown = this.settingsMenu.querySelector(
         ".sigma__settings-main [data-menu='translation']",
     );
+
     if (translations.length <= 1) {
         if (translationDropdown) translationDropdown.style.display = 'none';
         if (translations.length === 1) {

@@ -52,4 +52,13 @@ function buildSVGSprite() {
         .pipe(gulp.dest(paths.dest));
 }
 
+function watchFiles() {
+    gulp.watch(paths.js, buildJS);
+    gulp.watch(paths.css, buildCSS);
+    gulp.watch(paths.icons, buildSVGSprite);
+}
+
 export default gulp.series(buildJS, buildCSS, buildSVGSprite);
+
+// Export the watch task to use in dev mode
+export const dev = gulp.series(buildJS, buildCSS, buildSVGSprite, watchFiles);
