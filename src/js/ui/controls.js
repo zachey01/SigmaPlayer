@@ -36,7 +36,7 @@ function createControlsUI(wrapper, playerInstance) {
     centralPlay.id = 'sigma__central-play';
     centralPlay.className = 'sigma__central-play-button';
     centralPlay.setAttribute('tabindex', '0');
-    const centralPlayIcon = getIcon('play-btn');
+    const centralPlayIcon = getIcon('sigma-play-btn');
     centralPlayIcon.classList.add('sigma__centralPlayIcon');
     centralPlay.appendChild(centralPlayIcon);
     wrapper.appendChild(centralPlay);
@@ -53,9 +53,9 @@ function createControlsUI(wrapper, playerInstance) {
     const playPauseBtn = document.createElement('button');
     playPauseBtn.id = 'sigma__play-pause';
     playPauseBtn.setAttribute('tabindex', '0');
-    const playIcon = getIcon('play');
+    const playIcon = getIcon('sigma-play');
     playIcon.classList.add('sigma__playIcon');
-    const pauseIcon = getIcon('pause');
+    const pauseIcon = getIcon('sigma-pause');
     pauseIcon.classList.add('sigma__pauseIcon');
     playPauseBtn.appendChild(playIcon);
     playPauseBtn.appendChild(pauseIcon);
@@ -101,9 +101,9 @@ function createControlsUI(wrapper, playerInstance) {
     muteBtn.id = 'sigma__mute';
     muteBtn.className = 'sigma__isMute';
     muteBtn.setAttribute('tabindex', '0');
-    const volumeIcon = getIcon('volume');
+    const volumeIcon = getIcon('sigma-volume-2');
     volumeIcon.classList.add('sigma__volumeIcon');
-    const muteIcon = getIcon('volume-mute');
+    const muteIcon = getIcon('sigma-volume-0');
     muteIcon.classList.add('sigma__muteIcon');
     muteBtn.appendChild(volumeIcon);
     muteBtn.appendChild(muteIcon);
@@ -131,7 +131,7 @@ function createControlsUI(wrapper, playerInstance) {
     const settingsBtn = document.createElement('button');
     settingsBtn.id = 'sigma__settings-btn';
     settingsBtn.setAttribute('tabindex', '0');
-    const settingsIcon = getIcon('settings');
+    const settingsIcon = getIcon('sigma-settings');
     settingsIcon.classList.add('sigma__settingsIcon');
     settingsBtn.appendChild(settingsIcon);
     dropdown.appendChild(settingsBtn);
@@ -181,9 +181,9 @@ function createControlsUI(wrapper, playerInstance) {
     const fullScreenBtn = document.createElement('button');
     fullScreenBtn.id = 'sigma__full-screen';
     fullScreenBtn.setAttribute('tabindex', '0');
-    const fullscreenIcon = getIcon('fullscreen');
+    const fullscreenIcon = getIcon('sigma-maximize');
     fullscreenIcon.classList.add('sigma__fullscreenIcon');
-    const minimiseIcon = getIcon('fullscreen-exit');
+    const minimiseIcon = getIcon('sigma-minimize');
     minimiseIcon.classList.add('sigma__minimiseIcon');
     fullScreenBtn.appendChild(fullscreenIcon);
     fullScreenBtn.appendChild(minimiseIcon);

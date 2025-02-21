@@ -7,7 +7,7 @@ class SigmaPlayer {
         }
 
         if (!this.video) {
-            throw new Error('Видео элемент не найден');
+            throw new Error('Video element not found');
         }
 
         if (!this.video.closest('#sigma__video-wrapper')) {
@@ -50,7 +50,7 @@ class SigmaPlayer {
         }
     }
 
-    // --- Вспомогательные методы UI ---
+    // --- Helper methods for UI ---
     showSpinner = () => {
         this.loadingSpinner.style.display = 'block';
     };
@@ -123,8 +123,7 @@ class SigmaPlayer {
         );
     };
 
-    // --- Загрузка источников видео ---
-
+    // --- Loading video sources ---
     enablePlayButton = () => {
         this.playBtn.disabled = false;
         this.playBtn.style.opacity = 1;

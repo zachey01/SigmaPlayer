@@ -12,13 +12,10 @@ const paths = {
     js: 'src/js/**/*.js',
     css: 'src/css/**/*.css',
     icons: 'src/sprites/*.svg',
-    build: 'build',
-    dist: 'dist',
+    dest: 'dist',
 };
 
-function buildJS(env) {
-    const outputDir = env === 'dev' ? paths.build : paths.dist;
-
+function buildJS() {
     return gulp
         .src(paths.js)
         .pipe(concat('sigma-player.min.js'))
@@ -28,23 +25,19 @@ function buildJS(env) {
             }),
         )
         .pipe(terser())
-        .pipe(gulp.dest(outputDir));
+        .pipe(gulp.dest(paths.dest));
 }
 
-function buildCSS(env) {
-    const outputDir = env === 'dev' ? paths.build : paths.dist;
-
+function buildCSS() {
     return gulp
         .src(paths.css)
         .pipe(concat('sigma-player.min.css'))
         .pipe(postcss([autoprefixer(), cssnano()]))
         .pipe(cleanCSS())
-        .pipe(gulp.dest(outputDir));
+        .pipe(gulp.dest(paths.dest));
 }
 
-function buildSVGSprite(env) {
-    const outputDir = env === 'dev' ? paths.build : paths.dist;
-
+function buildSVGSprite() {
     return gulp
         .src(paths.icons)
         .pipe(
@@ -56,30 +49,16 @@ function buildSVGSprite(env) {
                 },
             }),
         )
-        .pipe(gulp.dest(outputDir));
+        .pipe(gulp.dest(paths.dest));
 }
 
 function watchFiles() {
-    gulp.watch(paths.js, () => buildJS('dev'));
-    gulp.watch(paths.css, () => buildCSS('dev'));
-    gulp.watch(paths.icons, () => buildSVGSprite('dev'));
+    gulp.watch(paths.js, buildJS);
+    gulp.watch(paths.css, buildCSS);
+    gulp.watch(paths.icons, buildSVGSprite);
 }
 
-// Production tasks
-const buildProd = gulp.series(
-    () => buildJS('prod'),
-    () => buildCSS('prod'),
-    () => buildSVGSprite('prod'),
-);
+export default gulp.series(buildJS, buildCSS, buildSVGSprite);
 
-// Development tasks
-const dev = gulp.series(
-    () => buildJS('dev'),
-    () => buildCSS('dev'),
-    () => buildSVGSprite('dev'),
-    watchFiles,
-);
-
-// Export the tasks
-export default buildProd;
-export { dev };
+// Export the watch task to use in dev mode
+export const dev = gulp.series(buildJS, buildCSS, buildSVGSprite, watchFiles);

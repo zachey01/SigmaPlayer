@@ -10,7 +10,7 @@ SigmaPlayer.prototype.showSubmenu = function (menuType) {
     this.settingsSubmenu.innerHTML = '';
     const backButton = document.createElement('div');
     backButton.className = 'sigma__dropdown-item sigma__back-button';
-    const backIcon = getIcon('back');
+    const backIcon = getIcon('sigma-chevron-left');
     backIcon.classList.add('sigma__backIcon');
     backButton.appendChild(backIcon);
     backButton.appendChild(
