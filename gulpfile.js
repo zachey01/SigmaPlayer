@@ -12,10 +12,13 @@ const paths = {
     js: 'src/js/**/*.js',
     css: 'src/css/**/*.css',
     icons: 'src/sprites/*.svg',
-    dest: 'dist',
+    build: 'build',
+    dist: 'dist',
 };
 
-function buildJS() {
+function buildJS(env) {
+    const outputDir = env === 'dev' ? paths.build : paths.dist;
+
     return gulp
         .src(paths.js)
         .pipe(concat('sigma-player.min.js'))
@@ -25,19 +28,23 @@ function buildJS() {
             }),
         )
         .pipe(terser())
-        .pipe(gulp.dest(paths.dest));
+        .pipe(gulp.dest(outputDir));
 }
 
-function buildCSS() {
+function buildCSS(env) {
+    const outputDir = env === 'dev' ? paths.build : paths.dist;
+
     return gulp
         .src(paths.css)
         .pipe(concat('sigma-player.min.css'))
         .pipe(postcss([autoprefixer(), cssnano()]))
         .pipe(cleanCSS())
-        .pipe(gulp.dest(paths.dest));
+        .pipe(gulp.dest(outputDir));
 }
 
-function buildSVGSprite() {
+function buildSVGSprite(env) {
+    const outputDir = env === 'dev' ? paths.build : paths.dist;
+
     return gulp
         .src(paths.icons)
         .pipe(
@@ -49,16 +56,30 @@ function buildSVGSprite() {
                 },
             }),
         )
-        .pipe(gulp.dest(paths.dest));
+        .pipe(gulp.dest(outputDir));
 }
 
 function watchFiles() {
-    gulp.watch(paths.js, buildJS);
-    gulp.watch(paths.css, buildCSS);
-    gulp.watch(paths.icons, buildSVGSprite);
+    gulp.watch(paths.js, () => buildJS('dev'));
+    gulp.watch(paths.css, () => buildCSS('dev'));
+    gulp.watch(paths.icons, () => buildSVGSprite('dev'));
 }
 
-export default gulp.series(buildJS, buildCSS, buildSVGSprite);
+// Production tasks
+const buildProd = gulp.series(
+    () => buildJS('prod'),
+    () => buildCSS('prod'),
+    () => buildSVGSprite('prod'),
+);
 
-// Export the watch task to use in dev mode
-export const dev = gulp.series(buildJS, buildCSS, buildSVGSprite, watchFiles);
+// Development tasks
+const dev = gulp.series(
+    () => buildJS('dev'),
+    () => buildCSS('dev'),
+    () => buildSVGSprite('dev'),
+    watchFiles,
+);
+
+// Export the tasks
+export default buildProd;
+export { dev };

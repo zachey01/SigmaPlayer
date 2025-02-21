@@ -23,6 +23,6 @@
     },
     "browserslist": "> 1%",
     "scripts": {
-        "build": "gulp"
+        "build": "gulp prod"
     }
 }
