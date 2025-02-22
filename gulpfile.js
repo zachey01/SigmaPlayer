@@ -7,6 +7,7 @@ import babel from 'gulp-babel';
 import postcss from 'gulp-postcss';
 import autoprefixer from 'autoprefixer';
 import cssnano from 'cssnano';
+import sourcemaps from 'gulp-sourcemaps'; // Import gulp-sourcemaps
 
 const paths = {
     js: 'src/js/**/*.js',
@@ -18,6 +19,7 @@ const paths = {
 function buildJS() {
     return gulp
         .src(paths.js)
+        .pipe(sourcemaps.init()) // Initialize source maps for JS
         .pipe(concat('sigma-player.min.js'))
         .pipe(
             babel({
@@ -25,15 +27,18 @@ function buildJS() {
             }),
         )
         .pipe(terser())
+        .pipe(sourcemaps.write('.')) // Write source maps to the current directory
         .pipe(gulp.dest(paths.dest));
 }
 
 function buildCSS() {
     return gulp
         .src(paths.css)
+        .pipe(sourcemaps.init()) // Initialize source maps for CSS
         .pipe(concat('sigma-player.min.css'))
         .pipe(postcss([autoprefixer(), cssnano()]))
         .pipe(cleanCSS())
+        .pipe(sourcemaps.write('.')) // Write source maps to the current directory
         .pipe(gulp.dest(paths.dest));
 }
 

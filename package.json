@@ -9,6 +9,7 @@
         "gulp-clean-css": "^4.3.0",
         "gulp-concat": "^2.6.1",
         "gulp-postcss": "^10.0.0",
+        "gulp-sourcemaps": "^3.0.0",
         "gulp-svg-sprite": "^2.0.3",
         "gulp-terser": "^2.1.0"
     },
