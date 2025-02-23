@@ -12,7 +12,6 @@ SigmaPlayer.prototype.selectQuality = function (quality, store = true) {
             return;
         }
 
-        // Обработаем URL, удалив параметры
         const cleanUrl = autoUrl.split('?')[0];
 
         if (!this.videoType) {
@@ -25,10 +24,9 @@ SigmaPlayer.prototype.selectQuality = function (quality, store = true) {
             }
         }
 
-        // Логика для HLS
         if (this.videoType === 'hls') {
             if (typeof Hls === 'undefined') {
-                console.warn('hls.js not available');
+                console.warn('hls.js не доступен');
                 this.hideSpinner();
                 return;
             }
@@ -44,7 +42,7 @@ SigmaPlayer.prototype.selectQuality = function (quality, store = true) {
                 });
                 this.hls.attachMedia(this.video);
                 this.hls.on(Hls.Events.MEDIA_ATTACHED, () => {
-                    this.hls.loadSource(autoUrl); // Загружаем оригинальный URL с параметрами
+                    this.hls.loadSource(autoUrl);
                 });
                 this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
                     this.video.currentTime = currentTime;
@@ -62,11 +60,9 @@ SigmaPlayer.prototype.selectQuality = function (quality, store = true) {
                 });
                 this.hideSpinner();
             }
-        }
-        // Логика для DASH
-        else if (this.videoType === 'dash') {
+        } else if (this.videoType === 'dash') {
             if (typeof dashjs === 'undefined') {
-                console.warn('dash.js not available');
+                console.warn('dash.js не доступен');
                 this.hideSpinner();
                 return;
             }
@@ -130,8 +126,6 @@ SigmaPlayer.prototype.selectQuality = function (quality, store = true) {
             this.videoSources[this.selectedTranslation][this.selectedQuality];
         if (urls && urls.length > 0) {
             const selectedUrl = urls[0];
-
-            // Обработаем URL, удалив параметры
             const cleanSelectedUrl = selectedUrl.split('?')[0];
 
             if (!this.videoType) {
@@ -144,7 +138,6 @@ SigmaPlayer.prototype.selectQuality = function (quality, store = true) {
                 }
             }
 
-            // Логика для HLS
             if (this.videoType === 'hls') {
                 if (typeof Hls === 'undefined') {
                     console.warn('hls.js не найден');
@@ -163,7 +156,7 @@ SigmaPlayer.prototype.selectQuality = function (quality, store = true) {
                     });
                     this.hls.attachMedia(this.video);
                     this.hls.on(Hls.Events.MEDIA_ATTACHED, () => {
-                        this.hls.loadSource(selectedUrl); // Загружаем оригинальный URL с параметрами
+                        this.hls.loadSource(selectedUrl);
                     });
                     this.hls.on(Hls.Events.MANIFEST_PARSED, () => {
                         this.video.currentTime = currentTime;
@@ -181,9 +174,7 @@ SigmaPlayer.prototype.selectQuality = function (quality, store = true) {
                     });
                     this.hideSpinner();
                 }
-            }
-            // Логика для DASH
-            else if (this.videoType === 'dash') {
+            } else if (this.videoType === 'dash') {
                 if (typeof dashjs === 'undefined') {
                     console.warn('dash.js не найден');
                     this.hideSpinner();
@@ -270,13 +261,17 @@ SigmaPlayer.prototype.populateQualityOptionsAuto = function () {
 };
 
 SigmaPlayer.prototype.populateTranslationOptions = function () {
+    if (this.videoType === 'dash') {
+        const translationDropdown = this.settingsMenu.querySelector(
+            ".sigma__settings-main [data-menu='translation']",
+        );
+        if (translationDropdown) {
+            translationDropdown.style.display = 'block';
+        }
+        return;
+    }
     const translations = Object.keys(this.videoSources);
-    const translationDropdown = this.settingsMenu.querySelector(
-        ".sigma__settings-main [data-menu='translation']",
-    );
-
     if (translations.length <= 1) {
-        if (translationDropdown) translationDropdown.style.display = 'none';
         if (translations.length === 1) {
             this.selectedTranslation = translations[0];
             if (this.autoQuality) {

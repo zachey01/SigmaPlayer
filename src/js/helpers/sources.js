@@ -17,6 +17,9 @@ SigmaPlayer.prototype.loadVideoSources = function (sources) {
             this.autoQuality = false;
             this.videoSources = sources;
         }
+    } else {
+        console.error('Неверный формат источников видео.');
+        return;
     }
     this.populateTranslationOptions();
 };

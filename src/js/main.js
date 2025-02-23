@@ -47,6 +47,8 @@ class SigmaPlayer {
 
         if (this.options.sources) {
             this.loadVideoSources(this.options.sources);
+        } else {
+            console.error('Нет источников видео');
         }
     }
 

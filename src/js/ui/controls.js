@@ -21,7 +21,6 @@ SigmaPlayer.prototype.resetMouseActivityTimeout = function () {
 };
 
 function createControlsUI(wrapper, playerInstance) {
-    // Если интерфейс уже создан – выходим
     if (wrapper.querySelector('#sigma__controls')) return;
 
     // --- Создаём загрузчик (spinner) ---
@@ -66,7 +65,7 @@ function createControlsUI(wrapper, playerInstance) {
     timelineContainer.className = 'sigma__timeline-container';
     timelineContainer.setAttribute('tabindex', '0');
     const timeline = document.createElement('div');
-    timeline.id = 'sigma__timeline'; // исправлено: добавлен префикс sigma__
+    timeline.id = 'sigma__timeline';
     timeline.className = 'sigma__timeline-spacer';
     const fullTimeline = document.createElement('div');
     fullTimeline.className = 'sigma__full-timeline';
