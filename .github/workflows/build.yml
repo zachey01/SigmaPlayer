@@ -36,10 +36,10 @@ jobs:
             - name: Run Gulp build
               run: gulp
 
-            - name: Commit changes
+            - name: Set up NPM authentication
+              run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+
+            - name: Publish package to NPM
               run: |
-                  git config --global user.name "github-actions"
-                  git config --global user.email "github-actions@users.noreply.github.com"
-                  git add -f ./dist/
-                  git commit -m "Automated build"
-                  git push
+                  npm version patch -m "Automated version bump"
+                  npm publish --access public
