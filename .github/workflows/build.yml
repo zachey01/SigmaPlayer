@@ -42,7 +42,7 @@ jobs:
                   git config --global user.email "github-actions@users.noreply.github.com"
 
             - name: Set up NPM authentication
-              run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN.NPM_TOKEN }}" > ~/.npmrc
+              run: echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
 
             - name: Publish package to NPM
               run: |
