@@ -25,5 +25,7 @@
     "browserslist": "> 1%",
     "scripts": {
         "build": "gulp prod"
-    }
+    },
+    "name": "SigmaPlayer",
+    "version": "1.0.0"
 }
