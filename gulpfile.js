@@ -8,6 +8,7 @@ import postcss from 'gulp-postcss';
 import autoprefixer from 'autoprefixer';
 import cssnano from 'cssnano';
 import sourcemaps from 'gulp-sourcemaps'; // Import gulp-sourcemaps
+import del from 'del'; // Import del for deleting files and folders
 
 const paths = {
     js: 'src/js/**/*.js',
@@ -49,12 +50,21 @@ function buildSVGSprite() {
             svgSprite({
                 mode: {
                     symbol: {
-                        sprite: 'sigma.svg',
+                        sprite: 'symbol/sigma.svg', // Ensure it's stored in the 'symbol' folder
                     },
                 },
             }),
         )
-        .pipe(gulp.dest(paths.dest));
+        .pipe(gulp.dest(paths.dest)) // Output the sprite to 'dist/symbol/'
+        .on('end', function () {
+            // After the sprite task finishes, copy the sigma.svg to the root of 'dist/'
+            gulp.src('dist/symbol/sigma.svg')
+                .pipe(gulp.dest(paths.dest)) // Copy it to the 'dist/' folder
+                .on('end', function () {
+                    // Now delete the 'symbol' folder
+                    del('dist/symbol'); // Delete the symbol folder
+                });
+        });
 }
 
 function watchFiles() {

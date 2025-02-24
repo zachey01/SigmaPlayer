@@ -1,3 +1,5 @@
+/dist
+
 # Logs
 logs
 *.log
@@ -128,5 +130,3 @@ out
 .yarn/install-state.gz
 .pnp.*
 
-/build/
-/dist/
