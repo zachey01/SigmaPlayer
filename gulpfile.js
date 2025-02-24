@@ -8,7 +8,7 @@ import postcss from 'gulp-postcss';
 import autoprefixer from 'autoprefixer';
 import cssnano from 'cssnano';
 import sourcemaps from 'gulp-sourcemaps'; // Import gulp-sourcemaps
-import del from 'del'; // Import del for deleting files and folders
+import { deleteAsync as del } from 'del'; // Import del for deleting files and folders
 
 const paths = {
     js: 'src/js/**/*.js',
