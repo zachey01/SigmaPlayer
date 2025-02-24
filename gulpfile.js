@@ -58,7 +58,7 @@ function buildSVGSprite() {
         .pipe(gulp.dest(paths.dest)) // Output the sprite to 'dist/symbol/'
         .on('end', function () {
             // After the sprite task finishes, copy the sigma.svg to the root of 'dist/'
-            gulp.src('dist/symbol/sigma.svg')
+            gulp.src('dist/symbol/sigma.svg', { allowEmpty: true }) // Allow empty to avoid error if file isn't found
                 .pipe(gulp.dest(paths.dest)) // Copy it to the 'dist/' folder
                 .on('end', function () {
                     // Now delete the 'symbol' folder
