@@ -164,7 +164,9 @@ SigmaPlayer.prototype.initialize = function () {
 
     this.settingsMenu.addEventListener('keydown', (e) => {
         const focusableItems = Array.from(
-            this.settingsMenu.querySelectorAll('.sigma__dropdown-item'),
+            this.settingsMenu.querySelectorAll(
+                '.sigma__dropdown-item, .sigma__menu-item',
+            ),
         ).filter((item) => item.getAttribute('tabindex') === '0');
         if (focusableItems.length === 0) return;
         const currentIndex = focusableItems.indexOf(document.activeElement);

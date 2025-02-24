@@ -102,7 +102,7 @@ class SigmaPlayer {
             this.SHOW_CLASS,
         );
         const settingsItems = this.settingsMenu.querySelectorAll(
-            '.sigma__dropdown-item',
+            '.sigma__dropdown-item, .sigma__menu-item',
         );
         settingsItems.forEach((item) => {
             item.setAttribute('tabindex', menuOpen ? '0' : '-1');

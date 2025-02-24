@@ -8,7 +8,7 @@
     --play-button-size: 60px;
     --seek-tooltip-bg: rgba(0, 0, 0, 0.7);
     --tooltip-text-color: #fff;
-    --icon-color: #fff; /* Цвет для SVG иконок */
+    --icon-color: #fff;
 
     -webkit-overflow-scrolling: touch;
     font-family: -apple-system, BlinkMacSystemFont, 'San Francisco',
@@ -25,7 +25,10 @@
     background: #000;
 }
 
-/* Поддержка fullscreen */
+#sigma__video-wrapper::-webkit-scrollbar-track {
+    background: orange; /* цвет дорожки */
+}
+
 #sigma__video-wrapper:fullscreen,
 #sigma__video-wrapper:-webkit-full-screen,
 #sigma__video-wrapper:-ms-fullscreen {
@@ -39,7 +42,7 @@
     max-height: 100%;
     border-radius: 10px;
 }
-/* Правило для всех SVG-иконок */
+
 .sigma__icon {
     fill: var(--icon-color);
     stroke: var(--icon-color);
@@ -55,7 +58,6 @@
     margin: auto;
 }
 
-/* Анимация спиннера */
 .sigma__spinner {
     position: absolute;
     top: 50%;
@@ -77,7 +79,6 @@
     }
 }
 
-/* Центральная кнопка воспроизведения в стиле iOS */
 .sigma__central-play-button {
     position: absolute;
     top: 50%;
@@ -94,7 +95,6 @@
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-
     background-color: var(--control-bg);
     backdrop-filter: blur(10px);
 }
@@ -108,7 +108,6 @@
     transform: translate(-50%, -50%) scale(0.95);
 }
 
-/* Подсказка времени при перемотке */
 .sigma__seek-tooltip {
     position: absolute;
     padding: 8px 12px;
@@ -123,7 +122,6 @@
     z-index: 5;
 }
 
-/* Панель управления */
 .sigma__control-wrapper {
     width: calc(100% - 12px);
     margin: 6px;
@@ -184,6 +182,7 @@
     filter: invert(1);
     display: inline-block;
     vertical-align: middle;
+    color: black;
 }
 
 .sigma__controls button {
@@ -198,7 +197,6 @@
     transform: scale(0.95);
 }
 
-/* Стили для Play/Pause */
 #sigma__play-pause .sigma__playIcon {
     display: block;
 }
@@ -215,7 +213,6 @@
     display: block;
 }
 
-/* Стили для громкости */
 #sigma__mute .sigma__muteIcon {
     display: block;
 }
@@ -232,7 +229,6 @@
     display: block;
 }
 
-/* Стили для полноэкранного режима */
 #sigma__full-screen .sigma__fullscreenIcon {
     display: block;
 }
@@ -314,7 +310,7 @@
     margin-left: 5px;
 }
 
-/* Dropdown и меню настроек */
+/* Стили для dropdown меню и настроек */
 .sigma__dropdown {
     position: relative;
 }
@@ -330,7 +326,7 @@
     border-radius: 10px;
     padding: 10px;
     z-index: 10;
-    min-width: 150px;
+    width: 250px;
 }
 
 .sigma__dropdown-content::before {
@@ -346,54 +342,76 @@
     z-index: -1;
 }
 
-.sigma__dropdown-content .sigma__dropdown-item {
-    padding: 15px 10px;
+/* Главный раздел настроек */
+.sigma__settings-main {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.sigma__menu-item {
+    padding: 8px 12px;
     cursor: pointer;
-    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     border-radius: 8px;
     transition: background 0.2s ease;
 }
 
-.sigma__dropdown-content .sigma__dropdown-item:hover,
-.sigma__dropdown-content .sigma__dropdown-item.active {
+.sigma__menu-item:hover,
+.sigma__menu-item.active {
     background: rgba(255, 255, 255, 0.2);
 }
 
-.sigma__dropdown.sigma__show .sigma__dropdown-content {
-    display: block;
-    opacity: 1;
-    transform: translateY(0);
+/* Иконка стрелки справа */
+.sigma__menu-arrow {
+    margin-left: 8px;
 }
 
-/* Подменю */
-.sigma__has-submenu .sigma__submenu {
+/* Подменю настроек */
+.sigma__settings-submenu {
     display: none;
-    opacity: 0;
-    transform: translateX(-10px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    position: absolute;
-    bottom: 0;
-    right: 100%;
+    flex-direction: column;
+    gap: 5px;
+    /* max-height: 200px; */
+    overflow-y: auto;
+}
+
+/* Фиксированная кнопка "назад" в подменю */
+.sigma__sub-back-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
     border-radius: 8px;
-    padding: 1px;
-    min-width: 150px;
-    z-index: 11;
-    background-color: var(--control-bg);
-    backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.2);
+    flex: 0 0 auto;
+    margin-bottom: 10px;
 }
 
-.sigma__has-submenu:hover .sigma__submenu {
-    display: block;
-    opacity: 1;
-    transform: translateX(0);
+/* Контейнер для скроллируемых элементов подменю */
+.sigma__submenu-items {
+    overflow-y: auto;
+    max-height: 250px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    scroll-behavior: smooth;
 }
 
-.sigma__submenu .sigma__dropdown-item {
-    padding: 15px 10px;
+/* Элементы подменю */
+.sigma__submenu-item {
+    padding: 15px 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    border-radius: 8px;
+    transition: background 0.2s ease;
 }
 
-.sigma__speed-option.active,
-.sigma__dropdown-content .sigma__dropdown-item.active {
+.sigma__submenu-item:hover,
+.sigma__submenu-item.active {
     background: rgba(255, 255, 255, 0.2);
 }
 
@@ -424,7 +442,6 @@
     transform: translateX(-50%) translateY(0);
 }
 
-/* Стилизация вертикального слайдера */
 #sigma__volume-slider {
     -webkit-appearance: slider-vertical;
     writing-mode: vertical-lr;
@@ -432,6 +449,12 @@
     width: 16px;
     border: none;
     accent-color: #fff;
+}
+
+.sigma__dropdown.sigma__show .sigma__dropdown-content {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* Media Queries для телефонов */

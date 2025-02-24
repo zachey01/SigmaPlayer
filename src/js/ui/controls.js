@@ -138,28 +138,45 @@ function createControlsUI(wrapper, playerInstance) {
     const settingsMenu = document.createElement('div');
     settingsMenu.id = 'sigma__settings-menu';
     settingsMenu.className = 'sigma__dropdown-content';
-    // Главный раздел меню
+    // Главный раздел меню с новыми классами для элементов
     const settingsMain = document.createElement('div');
     settingsMain.className = 'sigma__settings-main';
+
+    // Создание пункта "Скорость" с иконкой справа
     const speedItem = document.createElement('div');
-    speedItem.className = 'sigma__dropdown-item';
+    speedItem.className = 'sigma__menu-item';
     speedItem.dataset.menu = 'speed';
     speedItem.textContent = 'Скорость';
+    const arrow1 = getIcon('sigma-chevron-right');
+    arrow1.classList.add('sigma__menu-arrow');
+    speedItem.appendChild(arrow1);
     settingsMain.appendChild(speedItem);
+
+    // Создание пункта "Озвучка" с иконкой справа
     const translationItem = document.createElement('div');
-    translationItem.className = 'sigma__dropdown-item';
+    translationItem.className = 'sigma__menu-item';
     translationItem.dataset.menu = 'translation';
     translationItem.textContent = 'Озвучка';
+    const arrow2 = getIcon('sigma-chevron-right');
+    arrow2.classList.add('sigma__menu-arrow');
+    translationItem.appendChild(arrow2);
     settingsMain.appendChild(translationItem);
+
+    // Создание пункта "Качество" с иконкой справа
     const qualityItem = document.createElement('div');
-    qualityItem.className = 'sigma__dropdown-item';
+    qualityItem.className = 'sigma__menu-item';
     qualityItem.dataset.menu = 'quality';
     qualityItem.textContent = 'Качество';
+    const arrow3 = getIcon('sigma-chevron-right');
+    arrow3.classList.add('sigma__menu-arrow');
+    qualityItem.appendChild(arrow3);
     settingsMain.appendChild(qualityItem);
+
     // Подменю
     const settingsSubmenu = document.createElement('div');
     settingsSubmenu.className = 'sigma__settings-submenu';
     settingsSubmenu.style.display = 'none';
+    // Здесь подменю будет содержать фиксированную back-кнопку и скроллируемый контейнер для остальных элементов
     settingsMenu.appendChild(settingsMain);
     settingsMenu.appendChild(settingsSubmenu);
     dropdown.appendChild(settingsMenu);

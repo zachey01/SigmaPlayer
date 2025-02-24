@@ -3,6 +3,7 @@ SigmaPlayer.prototype.hideSubmenu = function () {
     this.settingsSubmenu.style.display = 'none';
     this.settingsSubmenu.innerHTML = '';
     this.settingsMain.style.display = 'block';
+    this._submenuItemsContainer = null;
 };
 
 // Метод показа подменю для выбранного типа настроек
@@ -10,23 +11,20 @@ SigmaPlayer.prototype.showSubmenu = function (menuType) {
     this.settingsMain.style.display = 'none';
     this.settingsSubmenu.style.display = 'block';
     this.settingsSubmenu.innerHTML = '';
+    // Создаём фиксированную back-кнопку (не скроллируется)
     const backButton = document.createElement('div');
-    backButton.className = 'sigma__dropdown-item sigma__back-button';
+    backButton.className = 'sigma__sub-back-item';
+    backButton.setAttribute('tabindex', '0');
     const backIcon = getIcon('sigma-chevron-left');
     backIcon.classList.add('sigma__backIcon');
     backButton.appendChild(backIcon);
-    backButton.appendChild(
-        document.createTextNode(
-            ` ${
-                menuType === 'speed'
-                    ? 'Скорость'
-                    : menuType === 'translation'
-                    ? 'Озвучка'
-                    : 'Качество'
-            }`,
-        ),
-    );
-    backButton.setAttribute('tabindex', '0');
+    const titleText =
+        menuType === 'speed'
+            ? 'Скорость'
+            : menuType === 'translation'
+            ? 'Озвучка'
+            : 'Качество';
+    backButton.appendChild(document.createTextNode(' ' + titleText));
     backButton.addEventListener('click', () => {
         this.hideSubmenu();
     });
@@ -37,6 +35,11 @@ SigmaPlayer.prototype.showSubmenu = function (menuType) {
         }
     });
     this.settingsSubmenu.appendChild(backButton);
+    // Создаём скроллируемый контейнер для остальных элементов подменю
+    this._submenuItemsContainer = document.createElement('div');
+    this._submenuItemsContainer.className = 'sigma__submenu-items';
+    this.settingsSubmenu.appendChild(this._submenuItemsContainer);
+
     if (menuType === 'speed') {
         this.populateSpeedSubmenu();
     } else if (menuType === 'translation') {
@@ -51,7 +54,7 @@ SigmaPlayer.prototype.showSubmenu = function (menuType) {
             const msg = document.createElement('div');
             msg.className = 'sigma__dropdown-item';
             msg.textContent = 'Озвучка недоступна';
-            this.settingsSubmenu.appendChild(msg);
+            this._submenuItemsContainer.appendChild(msg);
         }
     } else if (menuType === 'quality') {
         this.populateQualitySubmenu();
@@ -67,7 +70,7 @@ SigmaPlayer.prototype.populateSpeedSubmenu = function () {
     ];
     speeds.forEach((item) => {
         const speedOption = document.createElement('div');
-        speedOption.className = 'sigma__dropdown-item sigma__speed-option';
+        speedOption.className = 'sigma__submenu-item';
         speedOption.dataset.speed = item.speed;
         speedOption.textContent = item.label;
         speedOption.setAttribute('tabindex', '0');
@@ -81,7 +84,7 @@ SigmaPlayer.prototype.populateSpeedSubmenu = function () {
                 speedOption.click();
             }
         });
-        this.settingsSubmenu.appendChild(speedOption);
+        this._submenuItemsContainer.appendChild(speedOption);
     });
 };
 
@@ -90,20 +93,18 @@ SigmaPlayer.prototype.populateTranslationSubmenu = function () {
     var audioTracks = this.dashPlayer.getTracksFor('audio');
     if (audioTracks.length === 0) {
         var msg = document.createElement('div');
-        msg.className = 'sigma__dropdown-item';
+        msg.className = 'sigma__submenu-item';
         msg.textContent = 'Нет аудио-дорожек';
-        this.settingsSubmenu.appendChild(msg);
+        this._submenuItemsContainer.appendChild(msg);
         return;
     }
     audioTracks.forEach((track, index) => {
-        // Если переданы названия озвучек, выполняем замену
         let displayName;
         if (
             this.options.audioNames &&
             Array.isArray(this.options.audioNames.names) &&
             Array.isArray(this.options.audioNames.order)
         ) {
-            // Извлекаем число, удаляя все нецифровые символы
             const extracted = track.lang ? track.lang.replace(/\D/g, '') : '';
             const num = extracted ? parseInt(extracted) : index;
             const orderArr = this.options.audioNames.order;
@@ -114,7 +115,6 @@ SigmaPlayer.prototype.populateTranslationSubmenu = function () {
             const namesArr = this.options.audioNames.names;
             if (mappedIndex < namesArr.length) {
                 displayName = namesArr[mappedIndex];
-                // Если название равно "delete", пропускаем эту дорожку
                 if (displayName === 'delete') {
                     return;
                 }
@@ -125,7 +125,7 @@ SigmaPlayer.prototype.populateTranslationSubmenu = function () {
             displayName = track.lang || 'Дорожка ' + (index + 1);
         }
         var trackOption = document.createElement('div');
-        trackOption.className = 'sigma__dropdown-item';
+        trackOption.className = 'sigma__submenu-item';
         trackOption.dataset.trackIndex = index;
         trackOption.textContent = displayName;
         trackOption.setAttribute('tabindex', '0');
@@ -139,31 +139,30 @@ SigmaPlayer.prototype.populateTranslationSubmenu = function () {
                 trackOption.click();
             }
         });
-        this.settingsSubmenu.appendChild(trackOption);
+        this._submenuItemsContainer.appendChild(trackOption);
     });
 };
 
-// Подменю для выбора качества видео (без изменений)
+// Подменю для выбора качества видео
 SigmaPlayer.prototype.populateQualitySubmenu = function () {
     if (this.autoQuality) {
-        // Для DASH
         if (this.videoType === 'dash') {
             if (typeof dashjs === 'undefined') {
                 const msg = document.createElement('div');
-                msg.className = 'sigma__dropdown-item';
+                msg.className = 'sigma__submenu-item';
                 msg.textContent = 'dash.js не найден';
-                this.settingsSubmenu.appendChild(msg);
+                this._submenuItemsContainer.appendChild(msg);
                 return;
             }
             if (!this.dashPlayer) {
                 const msg = document.createElement('div');
-                msg.className = 'sigma__dropdown-item';
+                msg.className = 'sigma__submenu-item';
                 msg.textContent = 'Нет доступных качеств';
-                this.settingsSubmenu.appendChild(msg);
+                this._submenuItemsContainer.appendChild(msg);
                 return;
             }
             const autoOption = document.createElement('div');
-            autoOption.className = 'sigma__dropdown-item';
+            autoOption.className = 'sigma__submenu-item';
             autoOption.textContent = 'Авто';
             autoOption.dataset.level = -1;
             autoOption.setAttribute('tabindex', '0');
@@ -177,7 +176,7 @@ SigmaPlayer.prototype.populateQualitySubmenu = function () {
                     autoOption.click();
                 }
             });
-            this.settingsSubmenu.appendChild(autoOption);
+            this._submenuItemsContainer.appendChild(autoOption);
             const qualityList = this.dashPlayer.getBitrateInfoListFor('video');
             const qualitySet = new Map();
             qualityList.forEach((q) => {
@@ -188,7 +187,7 @@ SigmaPlayer.prototype.populateQualitySubmenu = function () {
             });
             qualitySet.forEach((levelIndex, qualityLabel) => {
                 const qualityOption = document.createElement('div');
-                qualityOption.className = 'sigma__dropdown-item';
+                qualityOption.className = 'sigma__submenu-item';
                 qualityOption.textContent = qualityLabel;
                 qualityOption.dataset.level = levelIndex;
                 qualityOption.setAttribute('tabindex', '0');
@@ -204,20 +203,20 @@ SigmaPlayer.prototype.populateQualitySubmenu = function () {
                         qualityOption.click();
                     }
                 });
-                this.settingsSubmenu.appendChild(qualityOption);
+                this._submenuItemsContainer.appendChild(qualityOption);
             });
         } else if (this.videoType === 'hls') {
             const msg = document.createElement('div');
-            msg.className = 'sigma__dropdown-item';
+            msg.className = 'sigma__submenu-item';
             msg.textContent = 'Выбор качества недоступен';
-            this.settingsSubmenu.appendChild(msg);
+            this._submenuItemsContainer.appendChild(msg);
         }
     } else {
         if (!this.selectedTranslation) {
             const msg = document.createElement('div');
-            msg.className = 'sigma__dropdown-item';
+            msg.className = 'sigma__submenu-item';
             msg.textContent = 'Нет озвучки';
-            this.settingsSubmenu.appendChild(msg);
+            this._submenuItemsContainer.appendChild(msg);
             return;
         }
         const qualities = Object.keys(
@@ -225,7 +224,7 @@ SigmaPlayer.prototype.populateQualitySubmenu = function () {
         ).sort((a, b) => parseInt(b) - parseInt(a));
         qualities.forEach((quality) => {
             const qualityOption = document.createElement('div');
-            qualityOption.className = 'sigma__dropdown-item';
+            qualityOption.className = 'sigma__submenu-item';
             qualityOption.textContent = quality;
             qualityOption.dataset.quality = quality;
             qualityOption.setAttribute('tabindex', '0');
@@ -239,12 +238,12 @@ SigmaPlayer.prototype.populateQualitySubmenu = function () {
                     qualityOption.click();
                 }
             });
-            this.settingsSubmenu.appendChild(qualityOption);
+            this._submenuItemsContainer.appendChild(qualityOption);
         });
     }
 };
 
-// Новый метод для переключения аудио-дорожки (принимает индекс) – уже реализован
+// Новый метод для переключения аудио-дорожки
 SigmaPlayer.prototype.setAudioTrack = function (index) {
     if (
         this.videoType === 'dash' &&
@@ -272,8 +271,6 @@ SigmaPlayer.prototype.setAudioTrack = function (index) {
     }
 };
 
-// Новый метод setCurrentTrack – для поддержки примера смены озвучки.
-// Если передается объект дорожки, ищем его индекс в списке аудио-дорожек и вызываем setAudioTrack.
 SigmaPlayer.prototype.setCurrentTrack = function (track) {
     if (
         this.videoType === 'dash' &&
