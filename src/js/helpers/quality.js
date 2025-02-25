@@ -229,14 +229,60 @@ SigmaPlayer.prototype.selectQualityAuto = function (levelIndex) {
             this.hls.currentLevel = levelIndex;
             this.updateAutoQualityUI();
             this.storeQuality(levelIndex);
+            // Логирование выбранного качества для HLS
+            if (this.hls.levels && this.hls.levels[levelIndex]) {
+                console.log(
+                    'Выбрано качество: ' +
+                        this.hls.levels[levelIndex].height +
+                        'p',
+                );
+            } else {
+                console.log('Выбрано качество: уровень ' + levelIndex);
+            }
         }
     } else if (this.videoType === 'dash') {
         if (this.dashPlayer) {
             if (levelIndex === -1) {
-                this.dashPlayer.setAutoSwitchQuality(true);
+                // Включаем автоматический выбор качества
+                this.dashPlayer.updateSettings({
+                    streaming: {
+                        abr: {
+                            autoSwitchBitrate: {
+                                video: true,
+                            },
+                        },
+                    },
+                });
+                console.log('Автоматический выбор качества включен');
             } else {
-                this.dashPlayer.setAutoSwitchQuality(false);
+                // Отключаем автоматический выбор и устанавливаем ручное качество
+                this.dashPlayer.updateSettings({
+                    streaming: {
+                        abr: {
+                            autoSwitchBitrate: {
+                                video: false,
+                            },
+                        },
+                    },
+                });
                 this.dashPlayer.setQualityFor('video', levelIndex);
+                // Получаем список доступных битрейтов для видео
+                var qualityList =
+                    this.dashPlayer.getBitrateInfoListFor('video');
+                var qualityInfo = qualityList.find(function (item) {
+                    return item.qualityIndex === levelIndex;
+                });
+                if (qualityInfo) {
+                    // Выводим в консоль разрешение выбранного качества (например, "720p")
+                    console.log(
+                        'Выбрано качество: ' +
+                            (qualityInfo.height
+                                ? qualityInfo.height + 'p'
+                                : qualityInfo.bitrate + 'bps'),
+                    );
+                } else {
+                    console.log('Выбрано качество: уровень ' + levelIndex);
+                }
             }
             this.storeQuality(levelIndex);
         }
