@@ -1,6 +1,7 @@
 {
     "name": "sigmaplayer",
     "version": "1.0.6",
+    "description": "A lightweight, customizable video player with support for adaptive streaming, subtitles, and full control customization.",
     "main": "./dist/sigma-player.min.js",
     "author": "Zachey",
     "license": "MIT",
@@ -27,7 +28,7 @@
     },
     "browserslist": "> 1%",
     "scripts": {
-        "build": "gulp prod"
+        "build": "gulp"
     },
     "devDependencies": {
         "@babel/preset-env": "^7.26.9",
@@ -43,5 +44,20 @@
         "gulp-terser": "^2.1.0",
         "del": "^8.0.0"
     },
-    "type": "module"
+    "type": "module",
+    "keywords": [
+        "video player",
+        "adaptive streaming",
+        "subtitles",
+        "customizable",
+        "lightweight",
+        "JavaScript",
+        "media player",
+        "video",
+        "streaming",
+        "hls",
+        "dash",
+        "HTML5 Video",
+        "HTML5 Audio"
+    ]
 }
