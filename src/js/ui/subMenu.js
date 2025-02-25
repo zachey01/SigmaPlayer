@@ -100,45 +100,56 @@ SigmaPlayer.prototype.populateTranslationSubmenu = function () {
     }
     audioTracks.forEach((track, index) => {
         let displayName;
+
+        // Проверяем, если audioNames существует и является объектом
         if (
             this.options.audioNames &&
-            Array.isArray(this.options.audioNames.names) &&
-            Array.isArray(this.options.audioNames.order)
+            typeof this.options.audioNames === 'object' &&
+            !Array.isArray(this.options.audioNames)
         ) {
+            // Извлекаем номер языка
             const extracted = track.lang ? track.lang.replace(/\D/g, '') : '';
             const num = extracted ? parseInt(extracted) : index;
-            const orderArr = this.options.audioNames.order;
-            let mappedIndex = num;
-            if (num < orderArr.length) {
-                mappedIndex = orderArr[num];
+
+            // Пытаемся получить имя аудиотрека по индексу
+            displayName = this.options.audioNames[num];
+
+            // Если имя "delete", пропускаем этот трек
+            if (displayName === 'delete') {
+                return;
             }
-            const namesArr = this.options.audioNames.names;
-            if (mappedIndex < namesArr.length) {
-                displayName = namesArr[mappedIndex];
-                if (displayName === 'delete') {
-                    return;
-                }
-            } else {
+
+            // Если имя не найдено, ставим по умолчанию
+            if (!displayName) {
                 displayName = track.lang || 'Дорожка ' + (index + 1);
             }
         } else {
+            // Если audioNames не настроено, просто используем язык или номер дорожки
             displayName = track.lang || 'Дорожка ' + (index + 1);
         }
+
+        // Создаем элемент для дорожки
         var trackOption = document.createElement('div');
         trackOption.className = 'sigma__submenu-item';
         trackOption.dataset.trackIndex = index;
         trackOption.textContent = displayName;
         trackOption.setAttribute('tabindex', '0');
+
+        // Слушатель клика для выбора дорожки
         trackOption.addEventListener('click', () => {
             this.setAudioTrack(index);
             this.hideSubmenu();
         });
+
+        // Слушатель нажатия клавиш (Enter или Space)
         trackOption.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
                 trackOption.click();
             }
         });
+
+        // Добавляем элемент в контейнер
         this._submenuItemsContainer.appendChild(trackOption);
     });
 };
