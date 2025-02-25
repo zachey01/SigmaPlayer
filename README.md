@@ -1,4 +1,6 @@
-# SigmaPlayer 🎬
+# SigmaPlayer  <img src="https://github.com/user-attachments/assets/7bb08681-bc07-4347-9fbc-d57e196055b6" alt="logo" width="80"/>
+
+
 
 SigmaPlayer is a lightweight, customizable video player designed to provide a seamless playback experience with minimal file size and full functionality. It's perfect for modern web applications and supports advanced features like adaptive streaming, subtitles, and custom controls.
 
