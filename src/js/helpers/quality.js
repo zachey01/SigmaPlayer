@@ -229,7 +229,6 @@ SigmaPlayer.prototype.selectQualityAuto = function (levelIndex) {
             this.hls.currentLevel = levelIndex;
             this.updateAutoQualityUI();
             this.storeQuality(levelIndex);
-            // Логирование выбранного качества для HLS
             if (this.hls.levels && this.hls.levels[levelIndex]) {
                 console.log(
                     'Выбрано качество: ' +
@@ -243,7 +242,6 @@ SigmaPlayer.prototype.selectQualityAuto = function (levelIndex) {
     } else if (this.videoType === 'dash') {
         if (this.dashPlayer) {
             if (levelIndex === -1) {
-                // Включаем автоматический выбор качества
                 this.dashPlayer.updateSettings({
                     streaming: {
                         abr: {
@@ -255,7 +253,6 @@ SigmaPlayer.prototype.selectQualityAuto = function (levelIndex) {
                 });
                 console.log('Автоматический выбор качества включен');
             } else {
-                // Отключаем автоматический выбор и устанавливаем ручное качество
                 this.dashPlayer.updateSettings({
                     streaming: {
                         abr: {
@@ -266,14 +263,12 @@ SigmaPlayer.prototype.selectQualityAuto = function (levelIndex) {
                     },
                 });
                 this.dashPlayer.setQualityFor('video', levelIndex);
-                // Получаем список доступных битрейтов для видео
                 var qualityList =
                     this.dashPlayer.getBitrateInfoListFor('video');
                 var qualityInfo = qualityList.find(function (item) {
                     return item.qualityIndex === levelIndex;
                 });
                 if (qualityInfo) {
-                    // Выводим в консоль разрешение выбранного качества (например, "720p")
                     console.log(
                         'Выбрано качество: ' +
                             (qualityInfo.height
