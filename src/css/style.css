@@ -466,9 +466,4 @@
     :root {
         --play-button-size: 50px;
     }
-
-    .sigma__controls svg,
-    .sigma__controls i {
-        height: 16px;
-    }
 }

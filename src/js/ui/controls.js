@@ -124,20 +124,20 @@ function createControlsUI(wrapper, playerInstance) {
     volumeContainer.appendChild(volumeMenu);
     controlsInner.appendChild(volumeContainer);
 
-    // --- Кнопка субтитров ---
-    const subtitlesBtn = document.createElement('button');
-    subtitlesBtn.id = 'sigma__subtitles';
-    subtitlesBtn.setAttribute('tabindex', '0');
-    const captionsOffIcon = getIcon('sigma-captions-off');
-    captionsOffIcon.classList.add('sigma__captionsOffIcon');
-    const captionsOnIcon = getIcon('sigma-captions');
-    captionsOnIcon.classList.add('sigma__captionsOnIcon');
-    // Изначально показываем значок отключённых субтитров
-    captionsOffIcon.style.display = 'block';
-    captionsOnIcon.style.display = 'none';
-    subtitlesBtn.appendChild(captionsOffIcon);
-    subtitlesBtn.appendChild(captionsOnIcon);
-    controlsInner.appendChild(subtitlesBtn);
+    // // --- Кнопка субтитров ---
+    // const subtitlesBtn = document.createElement('button');
+    // subtitlesBtn.id = 'sigma__subtitles';
+    // subtitlesBtn.setAttribute('tabindex', '0');
+    // const captionsOffIcon = getIcon('sigma-captions-off');
+    // captionsOffIcon.classList.add('sigma__captionsOffIcon');
+    // const captionsOnIcon = getIcon('sigma-captions');
+    // captionsOnIcon.classList.add('sigma__captionsOnIcon');
+    // // Изначально показываем значок отключённых субтитров
+    // captionsOffIcon.style.display = 'block';
+    // captionsOnIcon.style.display = 'none';
+    // subtitlesBtn.appendChild(captionsOffIcon);
+    // subtitlesBtn.appendChild(captionsOnIcon);
+    // controlsInner.appendChild(subtitlesBtn);
 
     // --- Настройки (dropdown) ---
     const dropdown = document.createElement('div');
@@ -187,15 +187,15 @@ function createControlsUI(wrapper, playerInstance) {
     qualityItem.appendChild(arrow3);
     settingsMain.appendChild(qualityItem);
 
-    // Создание пункта "Субтитры" с иконкой справа
-    const subtitlesItem = document.createElement('div');
-    subtitlesItem.className = 'sigma__menu-item';
-    subtitlesItem.dataset.menu = 'subtitles';
-    subtitlesItem.textContent = 'Субтитры';
-    const arrowSub = getIcon('sigma-chevron-right');
-    arrowSub.classList.add('sigma__menu-arrow');
-    subtitlesItem.appendChild(arrowSub);
-    settingsMain.appendChild(subtitlesItem);
+    // // Создание пункта "Субтитры" с иконкой справа
+    // const subtitlesItem = document.createElement('div');
+    // subtitlesItem.className = 'sigma__menu-item';
+    // subtitlesItem.dataset.menu = 'subtitles';
+    // subtitlesItem.textContent = 'Субтитры';
+    // const arrowSub = getIcon('sigma-chevron-right');
+    // arrowSub.classList.add('sigma__menu-arrow');
+    // subtitlesItem.appendChild(arrowSub);
+    // settingsMain.appendChild(subtitlesItem);
 
     // Подменю
     const settingsSubmenu = document.createElement('div');
@@ -216,9 +216,9 @@ function createControlsUI(wrapper, playerInstance) {
     qualityItem.addEventListener('click', () => {
         playerInstance.showSubmenu('quality');
     });
-    subtitlesItem.addEventListener('click', () => {
-        playerInstance.showSubmenu('subtitles');
-    });
+    // subtitlesItem.addEventListener('click', () => {
+    //     playerInstance.showSubmenu('subtitles');
+    // });
 
     // --- Полноэкранный режим ---
     const fullScreenBtn = document.createElement('button');
@@ -258,5 +258,5 @@ function createControlsUI(wrapper, playerInstance) {
     playerInstance.settingsMenu = settingsMenu;
     playerInstance.settingsMain = settingsMain;
     playerInstance.settingsSubmenu = settingsSubmenu;
-    playerInstance.subtitlesBtn = subtitlesBtn;
+    // playerInstance.subtitlesBtn = subtitlesBtn;
 }
