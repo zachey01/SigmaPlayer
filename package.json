@@ -42,7 +42,8 @@
         "gulp-sourcemaps": "^3.0.0",
         "gulp-svg-sprite": "^2.0.3",
         "gulp-terser": "^2.1.0",
-        "del": "^8.0.0"
+        "del": "^8.0.0",
+        "gulp-rename": "^2.0.0"
     },
     "type": "module",
     "keywords": [

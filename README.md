@@ -1,4 +1,4 @@
-# SigmaPlayer  <img src="https://github.com/user-attachments/assets/7bb08681-bc07-4347-9fbc-d57e196055b6" alt="logo" width="80"/>
+# SigmaPlayer <img src="https://github.com/user-attachments/assets/7bb08681-bc07-4347-9fbc-d57e196055b6" alt="logo" width="80"/>
 
 SigmaPlayer is a lightweight, customizable video player designed to provide a seamless playback experience with minimal file size and full functionality. It's perfect for modern web applications and supports advanced features like adaptive streaming, subtitles, and custom controls.
 
@@ -49,10 +49,7 @@ You can also use SigmaPlayer via a CDN by including the following script tag in 
 
 ```html
 <script src="https://www.unpkg.com/sigmaplayer"></script>
-<link
-    rel="stylesheet"
-    href="https://www.unpkg.com/sigmaplayer/dist/sigma-player.min.css"
-/>
+<link rel="stylesheet" href="https://www.unpkg.com/sigmaplayer/dist/main.css" />
 ```
 
 ## Usage 📄
@@ -66,11 +63,8 @@ Here’s how you can use SigmaPlayer:
 ```html
 <video id="my-video" src="your-video-source.mp4"></video>
 
-<link
-    rel="stylesheet"
-    href="https://www.unpkg.com/sigmaplayer/dist/sigma-player.min.css"
-/>
-<script src="https://cdn.jsdelivr.net/npm/sigmaplayer@1.0.6/dist/sigma-player.min.js"></script>
+<link rel="stylesheet" href="https://www.unpkg.com/sigmaplayer/dist/main.css" />
+<script src="https://cdn.jsdelivr.net/npm/sigmaplayer@1.0.6/dist/main.min.js"></script>
 
 <script>
     // Initialize SigmaPlayer
