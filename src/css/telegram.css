@@ -1,22 +1,22 @@
 :root {
-    /* Основные цвета Telegram‑UI */
-    --background-color: #ffffff;
-    --primary-color: #0088cc;
-    --secondary-color: #f9f9f9;
-    --accent-color: #0088cc;
-    --text-color: #2a2a2a;
-    --border-color: #e0e0e0;
+    /* Основные цвета Telegram‑UI, берём из Telegram WebApp API, если доступны */
+    --background-color: var(--tg-theme-bg-color, #ffffff);
+    --primary-color: var(--tg-theme-button-color, #0088cc);
+    --secondary-color: var(--tg-theme-secondary-bg-color, #f9f9f9);
+    --accent-color: var(--tg-theme-accent-text-color, #0088cc);
+    --text-color: var(--tg-theme-text-color, #2a2a2a);
+    --border-color: #e0e0e0; /* Без аналога в API, оставляем fallback */
 
     /* Параметры плеера */
-    --control-bg: #f1f1f1;
-    --control-color: #2a2a2a;
-    --progress-color: #0088cc;
+    --control-bg: var(--tg-theme-bottom-bar-bg-color, #f1f1f1);
+    --control-color: var(--tg-theme-text-color, #2a2a2a);
+    --progress-color: var(--tg-theme-accent-text-color, #0088cc);
     --buffer-color: #cccccc;
-    --spinner-color: #0088cc;
+    --spinner-color: var(--tg-theme-accent-text-color, #0088cc);
     --play-button-size: 60px;
-    --seek-tooltip-bg: #e0e0e0;
-    --tooltip-text-color: #2a2a2a;
-    --icon-color: #0088cc;
+    --seek-tooltip-bg: var(--tg-theme-secondary-bg-color, #e0e0e0);
+    --tooltip-text-color: var(--tg-theme-text-color, #2a2a2a);
+    --icon-color: var(--tg-theme-button-color, #0088cc);
 }
 
 #sigma__video-wrapper {
