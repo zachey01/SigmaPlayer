@@ -18,16 +18,12 @@ SigmaPlayer.prototype.showSubmenu = function (menuType) {
     const backIcon = getIcon('sigma-chevron-left');
     backIcon.classList.add('sigma__backIcon');
     backButton.appendChild(backIcon);
-    let titleText = '';
-    if (menuType === 'speed') {
-        titleText = 'Скорость';
-    } else if (menuType === 'translation') {
-        titleText = 'Озвучка';
-    } else if (menuType === 'quality') {
-        titleText = 'Качество';
-    } else if (menuType === 'subtitles') {
-        titleText = 'Субтитры';
-    }
+    const titleText =
+        menuType === 'speed'
+            ? 'Скорость'
+            : menuType === 'translation'
+            ? 'Озвучка'
+            : 'Качество';
     backButton.appendChild(document.createTextNode(' ' + titleText));
     backButton.addEventListener('click', () => {
         this.hideSubmenu();
@@ -62,8 +58,6 @@ SigmaPlayer.prototype.showSubmenu = function (menuType) {
         }
     } else if (menuType === 'quality') {
         this.populateQualitySubmenu();
-    } else if (menuType === 'subtitles') {
-        this.populateSubtitlesSubmenu();
     }
 };
 
@@ -106,38 +100,56 @@ SigmaPlayer.prototype.populateTranslationSubmenu = function () {
     }
     audioTracks.forEach((track, index) => {
         let displayName;
+
+        // Проверяем, если audioNames существует и является объектом
         if (
             this.options.audioNames &&
             typeof this.options.audioNames === 'object' &&
             !Array.isArray(this.options.audioNames)
         ) {
+            // Извлекаем номер языка
             const extracted = track.lang ? track.lang.replace(/\D/g, '') : '';
             const num = extracted ? parseInt(extracted) : index;
+
+            // Пытаемся получить имя аудиотрека по индексу
             displayName = this.options.audioNames[num];
+
+            // Если имя "delete", пропускаем этот трек
             if (displayName === 'delete') {
                 return;
             }
+
+            // Если имя не найдено, ставим по умолчанию
             if (!displayName) {
                 displayName = track.lang || 'Дорожка ' + (index + 1);
             }
         } else {
+            // Если audioNames не настроено, просто используем язык или номер дорожки
             displayName = track.lang || 'Дорожка ' + (index + 1);
         }
+
+        // Создаем элемент для дорожки
         var trackOption = document.createElement('div');
         trackOption.className = 'sigma__submenu-item';
         trackOption.dataset.trackIndex = index;
         trackOption.textContent = displayName;
         trackOption.setAttribute('tabindex', '0');
+
+        // Слушатель клика для выбора дорожки
         trackOption.addEventListener('click', () => {
             this.setAudioTrack(index);
             this.hideSubmenu();
         });
+
+        // Слушатель нажатия клавиш (Enter или Space)
         trackOption.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
                 trackOption.click();
             }
         });
+
+        // Добавляем элемент в контейнер
         this._submenuItemsContainer.appendChild(trackOption);
     });
 };
@@ -185,18 +197,9 @@ SigmaPlayer.prototype.populateQualitySubmenu = function () {
                 }
             });
             qualitySet.forEach((levelIndex, qualityLabel) => {
-                let displayLabel = qualityLabel;
-                const numericQuality = qualityLabel.replace('p', '');
-                if (
-                    this.options.qualityNames &&
-                    this.options.qualityNames[numericQuality]
-                ) {
-                    displayLabel =
-                        this.options.qualityNames[numericQuality] + 'p';
-                }
                 const qualityOption = document.createElement('div');
                 qualityOption.className = 'sigma__submenu-item';
-                qualityOption.textContent = displayLabel;
+                qualityOption.textContent = qualityLabel;
                 qualityOption.dataset.level = levelIndex;
                 qualityOption.setAttribute('tabindex', '0');
                 qualityOption.addEventListener('click', () => {
@@ -233,14 +236,7 @@ SigmaPlayer.prototype.populateQualitySubmenu = function () {
         qualities.forEach((quality) => {
             const qualityOption = document.createElement('div');
             qualityOption.className = 'sigma__submenu-item';
-            let displayQuality = quality;
-            if (
-                this.options.qualityNames &&
-                this.options.qualityNames[quality]
-            ) {
-                displayQuality = this.options.qualityNames[quality];
-            }
-            qualityOption.textContent = displayQuality;
+            qualityOption.textContent = quality;
             qualityOption.dataset.quality = quality;
             qualityOption.setAttribute('tabindex', '0');
             qualityOption.addEventListener('click', () => {
@@ -258,48 +254,48 @@ SigmaPlayer.prototype.populateQualitySubmenu = function () {
     }
 };
 
-// Подменю для выбора субтитров
-SigmaPlayer.prototype.populateSubtitlesSubmenu = function () {
-    // Добавляем опцию для отключения субтитров
-    const disableOption = document.createElement('div');
-    disableOption.className = 'sigma__submenu-item';
-    disableOption.textContent = 'Отключить субтитры';
-    disableOption.setAttribute('tabindex', '0');
-    disableOption.addEventListener('click', () => {
-        this.selectSubtitle(null);
-        this.hideSubmenu();
-    });
-    disableOption.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            disableOption.click();
+// Новый метод для переключения аудио-дорожки
+SigmaPlayer.prototype.setAudioTrack = function (index) {
+    if (
+        this.videoType === 'dash' &&
+        this.dashPlayer &&
+        typeof this.dashPlayer.getTracksFor === 'function'
+    ) {
+        var audioTracks = this.dashPlayer.getTracksFor('audio');
+        if (audioTracks && audioTracks[index]) {
+            this.dashPlayer.setCurrentTrack(audioTracks[index]);
+            console.log(
+                'Выбрана аудио-дорожка:',
+                audioTracks[index].lang || 'Дорожка ' + (index + 1),
+            );
         }
-    });
-    this._submenuItemsContainer.appendChild(disableOption);
+    } else if (this.videoType === 'hls' && this.hls && this.hls.audioTracks) {
+        if (this.hls.audioTracks[index]) {
+            this.hls.audioTrack = index;
+            console.log(
+                'Выбрана аудио-дорожка:',
+                this.hls.audioTracks[index].name ||
+                    this.hls.audioTracks[index].lang ||
+                    'Дорожка ' + (index + 1),
+            );
+        }
+    }
+};
 
-    if (this.options.captions && Array.isArray(this.options.captions)) {
-        this.options.captions.forEach((caption, index) => {
-            const captionOption = document.createElement('div');
-            captionOption.className = 'sigma__submenu-item';
-            captionOption.textContent = caption.name;
-            captionOption.setAttribute('tabindex', '0');
-            captionOption.dataset.captionIndex = index;
-            captionOption.addEventListener('click', () => {
-                this.selectSubtitle(index);
-                this.hideSubmenu();
-            });
-            captionOption.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    captionOption.click();
-                }
-            });
-            this._submenuItemsContainer.appendChild(captionOption);
-        });
+SigmaPlayer.prototype.setCurrentTrack = function (track) {
+    if (
+        this.videoType === 'dash' &&
+        this.dashPlayer &&
+        typeof this.dashPlayer.getTracksFor === 'function'
+    ) {
+        var audioTracks = this.dashPlayer.getTracksFor('audio');
+        var index = audioTracks.indexOf(track);
+        if (index !== -1) {
+            this.setAudioTrack(index);
+        } else {
+            console.warn('Аудиодорожка не найдена');
+        }
     } else {
-        const msg = document.createElement('div');
-        msg.className = 'sigma__submenu-item';
-        msg.textContent = 'Нет субтитров';
-        this._submenuItemsContainer.appendChild(msg);
+        console.warn('setCurrentTrack доступен только для DASH');
     }
 };
