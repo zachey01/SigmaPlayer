@@ -61,7 +61,7 @@ To use SigmaPlayer, create an instance by passing a video element or a selector 
 Here’s how you can use SigmaPlayer:
 
 ```html
-<video id="my-video" src="your-video-source.mp4"></video>
+<video id="my-video"></video>
 
 <link rel="stylesheet" href="https://www.unpkg.com/sigmaplayer/dist/main.css" />
 <script src="https://cdn.jsdelivr.net/npm/sigmaplayer@1.0.6/dist/main.min.js"></script>
