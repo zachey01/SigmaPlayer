@@ -1,6 +1,6 @@
 {
     "name": "sigmaplayer",
-    "version": "1.0.11",
+    "version": "1.0.12",
     "description": "A lightweight, customizable video player with support for adaptive streaming, subtitles, and full control customization.",
     "main": "./dist/sigma-player.min.js",
     "author": "Zachey",
