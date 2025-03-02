@@ -33,7 +33,6 @@ class SigmaPlayer {
             thumbnailOverlay.style.backgroundSize = 'cover';
             thumbnailOverlay.style.backgroundPosition = 'center';
             thumbnailOverlay.style.zIndex = '1';
-            // Контролы должны быть выше превью (если z-index в контролах >1)
             wrapper.appendChild(thumbnailOverlay);
             this.thumbnailOverlay = thumbnailOverlay;
         }
@@ -64,6 +63,13 @@ class SigmaPlayer {
 
         this.longPressTimeout = null;
         this.longPressActivated = false;
+
+        // Если переданы источники в формате сезонов/серий – отметить режим сериалов
+        if (this.options.sources && this.options.sources.seasons) {
+            this.isSeries = true;
+            // Создаём сразу dropdown для выбора сезона/серии (без ожидания загрузки видео)
+            createSeasonEpisodeDropdown(wrapper, this);
+        }
 
         this.initialize();
 
@@ -367,6 +373,25 @@ class SigmaPlayer {
         }
         this.updateTabIndices();
     };
+
+    // Новый метод для выбора сезона и серии (режим сериалов)
+    selectSeasonEpisode = function (season, episode) {
+        this.currentSeason = season;
+        this.currentEpisode = episode;
+        const episodeData =
+            this.options.sources.seasons[season].episodes[episode];
+        if (!episodeData || !episodeData.sources) {
+            console.error('Данные для выбранной серии отсутствуют');
+            return;
+        }
+        // Устанавливаем источники для выбранной серии и сохраняем возможные audioNames
+        this.videoSources = episodeData.sources;
+        this.options.audioNames = episodeData.audioNames || null;
+        // Сброс выбранной озвучки (translation)
+        this.selectedTranslation = null;
+        // Перезапускаем логику выбора озвучки/качества
+        this.populateTranslationOptions();
+    };
 }
 
 ////////////////////
@@ -542,6 +567,66 @@ SigmaPlayer.prototype.initialize = function () {
 // Методы плеера    //
 //////////////////////
 
-// Метод выбора субтитров будет добавлен в ui/subtitles.js через расширение прототипа
+// ... (остальные методы плеера остаются без изменений)
 
-// Метод выбора качества, настройки субтитров и перевода, остаются без изменений (расширения см. ниже)
+//////////////////////////////
+// UI: Создание dropdown для выбора сезона/серии
+//////////////////////////////
+function createSeasonEpisodeDropdown(wrapper, playerInstance) {
+    // Если уже создан, выходим
+    if (wrapper.querySelector('.sigma__season-episode-dropdown')) return;
+    const dropdownContainer = document.createElement('div');
+    dropdownContainer.className = 'sigma__season-episode-dropdown';
+
+    // Создаём select для выбора сезона
+    const seasonSelect = document.createElement('select');
+    seasonSelect.id = 'sigma__season-select';
+
+    // Создаём select для выбора серии
+    const episodeSelect = document.createElement('select');
+    episodeSelect.id = 'sigma__episode-select';
+
+    dropdownContainer.appendChild(seasonSelect);
+    dropdownContainer.appendChild(episodeSelect);
+    wrapper.appendChild(dropdownContainer);
+
+    // Заполняем select сезонов из playerInstance.options.sources.seasons
+    const seasons = playerInstance.options.sources.seasons;
+    for (let season in seasons) {
+        const option = document.createElement('option');
+        option.value = season;
+        option.textContent = 'Сезон ' + season;
+        seasonSelect.appendChild(option);
+    }
+    // Устанавливаем первый сезон по умолчанию
+    seasonSelect.value = Object.keys(seasons)[0];
+
+    // Функция для заполнения списка серий на основе выбранного сезона
+    function populateEpisodes() {
+        episodeSelect.innerHTML = '';
+        const selectedSeason = seasonSelect.value;
+        const episodes = seasons[selectedSeason].episodes;
+        for (let episode in episodes) {
+            const option = document.createElement('option');
+            option.value = episode;
+            option.textContent = 'Серия ' + episode;
+            episodeSelect.appendChild(option);
+        }
+        // Выбираем первую серию по умолчанию
+        episodeSelect.value = Object.keys(episodes)[0];
+        // Устанавливаем источники для выбранной серии
+        playerInstance.selectSeasonEpisode(
+            seasonSelect.value,
+            episodeSelect.value,
+        );
+    }
+    seasonSelect.addEventListener('change', populateEpisodes);
+    episodeSelect.addEventListener('change', () => {
+        playerInstance.selectSeasonEpisode(
+            seasonSelect.value,
+            episodeSelect.value,
+        );
+    });
+    // Первоначальное заполнение серий
+    populateEpisodes();
+}

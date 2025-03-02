@@ -444,6 +444,34 @@
     accent-color: var(--accent-color);
 }
 
+/* Dropdown для выбора сезона и серии в верхнем левом углу (стиль Telegram) */
+.sigma__season-episode-dropdown {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    color: var(--tg-theme-text-color, #2a2a2a);
+    border-radius: 4px;
+    padding: 5px;
+    z-index: 100;
+    font-family: -apple-system, BlinkMacSystemFont, 'San Francisco',
+        'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+.sigma__season-episode-dropdown select {
+    background: var(--tg-theme-bg-color, #ffffff);
+    color: var(--tg-theme-text-color, #2a2a2a);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 3px 5px;
+    margin-right: 5px;
+    font-size: 14px;
+}
+
+.sigma__season-episode-dropdown select:focus {
+    outline: none;
+    border-color: var(--tg-theme-button-color, #0088cc);
+}
+
 /* Media Queries для телефонов */
 @media (max-width: 768px) {
     .sigma__control-wrapper {
