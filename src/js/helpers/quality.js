@@ -297,8 +297,9 @@ SigmaPlayer.prototype.updateAutoQualityUI = function () {
     }
 };
 
+// Реализация пустой функции для авто-качества (можно расширять при необходимости)
 SigmaPlayer.prototype.populateQualityOptionsAuto = function () {
-    // todo: implement
+    // В режиме авто-качества выбор происходит автоматически – дополнительный UI не требуется.
 };
 
 SigmaPlayer.prototype.populateTranslationOptions = function () {

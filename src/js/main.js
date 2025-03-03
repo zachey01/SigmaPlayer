@@ -348,11 +348,7 @@ class SigmaPlayer {
     };
 
     checkPlayButton = () => {
-        if (this.playEnabled) {
-            this.enablePlayButton();
-        } else {
-            this.disablePlayButton();
-        }
+        this.enablePlayButton();
     };
 
     closeOtherMenus = (currentMenu) => {
@@ -373,30 +369,52 @@ class SigmaPlayer {
         }
         this.updateTabIndices();
     };
-
-    // Новый метод для выбора сезона и серии (режим сериалов)
-    selectSeasonEpisode = function (season, episode) {
-        this.currentSeason = season;
-        this.currentEpisode = episode;
-        const episodeData =
-            this.options.sources.seasons[season].episodes[episode];
-        if (!episodeData || !episodeData.sources) {
-            console.error('Данные для выбранной серии отсутствуют');
-            return;
-        }
-        // Устанавливаем источники для выбранной серии и сохраняем возможные audioNames
-        this.videoSources = episodeData.sources;
-        this.options.audioNames = episodeData.audioNames || null;
-        // Сброс выбранной озвучки (translation)
-        this.selectedTranslation = null;
-        // Перезапускаем логику выбора озвучки/качества
-        this.populateTranslationOptions();
-    };
 }
 
-////////////////////
-// Инициализация //
-////////////////////
+// Инициализация плеера и привязка событий
+// main.js (фрагмент метода initialize)
+
+// main.js (фрагмент метода selectSeasonEpisode)
+SigmaPlayer.prototype.selectSeasonEpisode = function (season, episode) {
+    this.currentSeason = season;
+    this.currentEpisode = episode;
+    const episodeData = this.options.sources.seasons[season].episodes[episode];
+    if (!episodeData || !episodeData.sources) {
+        console.error('Данные для выбранной серии отсутствуют');
+        return;
+    }
+
+    // Сбрасываем уже инициализированные плееры для hls/dash (если были)
+    if (this.hls) {
+        this.hls.destroy();
+        this.hls = null;
+    }
+    if (this.dashPlayer) {
+        this.dashPlayer.reset();
+        this.dashPlayer = null;
+    }
+    // Сбрасываем videoType, чтобы при загрузке новой серии определился формат исходного файла
+    this.videoType = null;
+
+    // Если источник передаётся как строка, оборачиваем в объект auto
+    if (typeof episodeData.sources.default === 'string') {
+        this.autoQuality = true;
+        this.videoSources = {
+            default: { auto: episodeData.sources.default },
+        };
+    } else {
+        this.videoSources = episodeData.sources;
+        this.autoQuality = false;
+    }
+    this.options.audioNames = episodeData.audioNames || null;
+    // Сброс выбранной озвучки
+    this.selectedTranslation = null;
+    // Перезапускаем логику выбора озвучки/качества
+    this.populateTranslationOptions();
+    // Обновляем источник у видео и перезагружаем метаданные
+    this.video.load();
+};
+
 SigmaPlayer.prototype.initialize = function () {
     this.video.addEventListener('play', () => {
         this.playBtn.classList.add(this.IS_PLAYING_CLASS);
@@ -426,7 +444,8 @@ SigmaPlayer.prototype.initialize = function () {
     this.video.addEventListener('play', this.hideCentralPlay);
     this.video.addEventListener('ended', this.showCentralPlay);
 
-    this.disablePlayButton();
+    // Убираем вызов disablePlayButton(), чтобы кнопка воспроизведения была всегда доступна
+    // this.disablePlayButton();
 
     const savedVolume = localStorage.getItem('volume');
     if (savedVolume !== null) {
@@ -448,20 +467,14 @@ SigmaPlayer.prototype.initialize = function () {
     const savedSpeed = this.getStoredSpeed();
     this.video.playbackRate = savedSpeed;
 
+    // Изменён обработчик: воспроизведение всегда доступно
     this.playBtn.addEventListener('click', () => {
-        if (this.playEnabled) {
-            this.togglePlayState();
-        } else {
-            alert(
-                'Пожалуйста, выберите озвучку, субтитры (если нужно) и качество перед воспроизведением.',
-            );
-        }
+        this.togglePlayState();
     });
 
+    // Изменён обработчик центральной кнопки воспроизведения
     this.centralPlayBtn.addEventListener('click', () => {
-        if (this.playEnabled) {
-            this.togglePlayState();
-        }
+        this.togglePlayState();
     });
 
     this.fullScreenBtn.addEventListener('click', this.toggleFullscreen);
@@ -563,11 +576,8 @@ SigmaPlayer.prototype.initialize = function () {
     });
 };
 
-//////////////////////
-// Методы плеера    //
-//////////////////////
-
-// ... (остальные методы плеера остаются без изменений)
+// Остальные методы плеера остаются без изменений
+// …
 
 //////////////////////////////
 // UI: Создание dropdown для выбора сезона/серии

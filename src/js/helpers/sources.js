@@ -1,3 +1,4 @@
+// sources.js
 SigmaPlayer.prototype.loadVideoSources = function (sources) {
     if (typeof sources === 'string') {
         this.autoQuality = true;
@@ -6,8 +7,13 @@ SigmaPlayer.prototype.loadVideoSources = function (sources) {
         // Если передан объект сезонов/серий
         if (sources.seasons) {
             this.isSeries = true;
-            // Сохраняем полную структуру источников в options – dropdown сам установит videoSources
             this.options.sources = sources;
+            // Автоматически выбираем первый сезон и первую серию
+            const defaultSeason = Object.keys(sources.seasons)[0];
+            const defaultEpisode = Object.keys(
+                sources.seasons[defaultSeason].episodes,
+            )[0];
+            this.selectSeasonEpisode(defaultSeason, defaultEpisode);
             return;
         }
         let isQualityMapping = false;
