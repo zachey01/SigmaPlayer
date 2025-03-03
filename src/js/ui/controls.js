@@ -1,5 +1,12 @@
 SigmaPlayer.prototype.showControls = function () {
     this.controls.classList.remove(this.HIDE_CONTROLS_CLASS);
+    // Если dropdown для выбора сезонов/серий существует, показываем его вместе с контролами
+    let seasonDropdown = this.videoWrapper.querySelector(
+        '.sigma__season-episode-dropdown',
+    );
+    if (seasonDropdown) {
+        seasonDropdown.style.display = 'block';
+    }
     this.resetMouseActivityTimeout();
 };
 
@@ -7,6 +14,19 @@ SigmaPlayer.prototype.hideControls = function () {
     if (this.isMenuOpen()) return;
     if (!this.video.paused && !this.video.ended) {
         this.controls.classList.add(this.HIDE_CONTROLS_CLASS);
+        // Скрываем dropdown настроек, если он открыт
+        if (
+            this.settingsMenu.parentElement.classList.contains(this.SHOW_CLASS)
+        ) {
+            this.settingsMenu.parentElement.classList.remove(this.SHOW_CLASS);
+        }
+        // Скрываем dropdown для выбора сезонов/серий, если он существует
+        let seasonDropdown = this.videoWrapper.querySelector(
+            '.sigma__season-episode-dropdown',
+        );
+        if (seasonDropdown) {
+            seasonDropdown.style.display = 'none';
+        }
     }
 };
 

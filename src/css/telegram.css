@@ -329,13 +329,16 @@
     padding: 10px;
     z-index: 10;
     width: 250px;
-    background: var(--control-bg);
+    background: var(--tg-theme-bg-color, #ffffff);
+    color: var(--tg-theme-text-color, #2a2a2a);
+    border: 1px solid var(--border-color);
 }
 
-.sigma__dropdown.sigma__show .sigma__dropdown-content {
-    display: block;
-    opacity: 1;
-    transform: translateY(0);
+/* Когда остальные контролы скрыты – скрываем и dropdown */
+.sigma__hide-controls .sigma__dropdown-content {
+    display: none;
+    opacity: 0;
+    transform: translateY(10px);
 }
 
 /* Главный раздел настроек */
