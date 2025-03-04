@@ -488,3 +488,9 @@
         border-radius: 0;
     }
 }
+
+.sigma__dropdown.sigma__show .sigma__dropdown-content {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
