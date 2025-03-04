@@ -299,3 +299,174 @@ SigmaPlayer.prototype.setCurrentTrack = function (track) {
         console.warn('setCurrentTrack доступен только для DASH');
     }
 };
+
+SigmaPlayer.prototype.showSubmenu = function (menuType) {
+    this.settingsMain.style.display = 'none';
+    this.settingsSubmenu.style.display = 'block';
+    this.settingsSubmenu.innerHTML = '';
+    // Создаём фиксированную back-кнопку (не скроллируется)
+    const backButton = document.createElement('div');
+    backButton.className = 'sigma__sub-back-item';
+    backButton.setAttribute('tabindex', '0');
+    const backIcon = getIcon('sigma-chevron-left');
+    backIcon.classList.add('sigma__backIcon');
+    backButton.appendChild(backIcon);
+    const titleText =
+        menuType === 'speed'
+            ? 'Скорость'
+            : menuType === 'translation'
+            ? 'Озвучка'
+            : menuType === 'quality'
+            ? 'Качество'
+            : menuType === 'subtitle'
+            ? 'Субтитры'
+            : '';
+    backButton.appendChild(document.createTextNode(' ' + titleText));
+    backButton.addEventListener('click', () => {
+        this.hideSubmenu();
+    });
+    backButton.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            backButton.click();
+        }
+    });
+    this.settingsSubmenu.appendChild(backButton);
+    // Создаём скроллируемый контейнер для остальных элементов подменю
+    this._submenuItemsContainer = document.createElement('div');
+    this._submenuItemsContainer.className = 'sigma__submenu-items';
+    this.settingsSubmenu.appendChild(this._submenuItemsContainer);
+
+    if (menuType === 'speed') {
+        this.populateSpeedSubmenu();
+    } else if (menuType === 'translation') {
+        // Озвучка доступна только для DASH
+        if (
+            this.videoType === 'dash' &&
+            this.dashPlayer &&
+            typeof this.dashPlayer.getTracksFor === 'function'
+        ) {
+            this.populateTranslationSubmenu();
+        } else {
+            const msg = document.createElement('div');
+            msg.className = 'sigma__dropdown-item';
+            msg.textContent = 'Озвучка недоступна';
+            this._submenuItemsContainer.appendChild(msg);
+        }
+    } else if (menuType === 'quality') {
+        this.populateQualitySubmenu();
+    } else if (menuType === 'subtitle') {
+        this.populateSubtitleSubmenu();
+    }
+};
+
+SigmaPlayer.prototype.populateSubtitleSubmenu = function () {
+    // Пункт для отключения субтитров
+    const disableOption = document.createElement('div');
+    disableOption.className = 'sigma__submenu-item';
+    disableOption.textContent = 'Отключить';
+    disableOption.setAttribute('tabindex', '0');
+    disableOption.addEventListener('click', () => {
+        this.setSubtitle(null);
+        this.hideSubmenu();
+    });
+    disableOption.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            disableOption.click();
+        }
+    });
+    this._submenuItemsContainer.appendChild(disableOption);
+
+    // Если субтитры недоступны
+    if (!this.subtitleData || this.subtitleData.length === 0) {
+        const msg = document.createElement('div');
+        msg.className = 'sigma__submenu-item';
+        msg.textContent = 'Субтитры не доступны';
+        this._submenuItemsContainer.appendChild(msg);
+        return;
+    }
+
+    // Выводим варианты выбора субтитров
+    this.subtitleData.forEach((track, index) => {
+        const trackOption = document.createElement('div');
+        trackOption.className = 'sigma__submenu-item';
+        trackOption.textContent = track.name;
+        trackOption.dataset.subtitleIndex = index;
+        trackOption.setAttribute('tabindex', '0');
+        trackOption.addEventListener('click', () => {
+            this.setSubtitle(index);
+            this.hideSubmenu();
+        });
+        trackOption.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                trackOption.click();
+            }
+        });
+        this._submenuItemsContainer.appendChild(trackOption);
+    });
+};
+
+SigmaPlayer.prototype.setSubtitle = function (index) {
+    // Удаляем ранее добавленные треки (сгенерированные)
+    const existingTracks = this.video.querySelectorAll(
+        'track[data-generated="true"]',
+    );
+    existingTracks.forEach((track) => track.remove());
+
+    if (index === null) {
+        console.log('Субтитры отключены');
+        return;
+    }
+    if (!this.subtitleData || !this.subtitleData[index]) {
+        console.warn('Субтитры не найдены');
+        return;
+    }
+    const trackData = this.subtitleData[index];
+
+    // Если включён режим blobSubtitle, делаем запрос к субтитрам и создаём Blob
+    if (this.options.blobSubtitle) {
+        fetch(trackData.url)
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Ошибка при загрузке субтитров');
+                }
+                return response.text();
+            })
+            .then((text) => {
+                const blob = new Blob([text], { type: 'text/vtt' });
+                const blobUrl = URL.createObjectURL(blob);
+                const trackElem = document.createElement('track');
+                trackElem.kind = 'subtitles';
+                trackElem.label = trackData.name;
+                trackElem.src = blobUrl;
+                trackElem.default = true;
+                trackElem.setAttribute('data-generated', 'true');
+                this.video.appendChild(trackElem);
+
+                // Принудительно устанавливаем режим отображения для всех текстовых дорожек
+                for (let i = 0; i < this.video.textTracks.length; i++) {
+                    this.video.textTracks[i].mode = 'showing';
+                }
+                console.log('Выбран субтитр (blob):', trackData.name);
+            })
+            .catch((err) => {
+                console.error('Ошибка загрузки субтитров:', err);
+            });
+    } else {
+        // Обычная логика – напрямую задаём URL субтитров
+        const trackElem = document.createElement('track');
+        trackElem.kind = 'subtitles';
+        trackElem.label = trackData.name;
+        trackElem.src = trackData.url;
+        trackElem.default = true;
+        trackElem.setAttribute('data-generated', 'true');
+        this.video.appendChild(trackElem);
+
+        for (let i = 0; i < this.video.textTracks.length; i++) {
+            this.video.textTracks[i].mode = 'showing';
+        }
+        console.log('Выбран субтитр:', trackData.name);
+    }
+};

@@ -1,4 +1,3 @@
-// sources.js
 SigmaPlayer.prototype.loadVideoSources = function (sources) {
     if (typeof sources === 'string') {
         this.autoQuality = true;
@@ -30,6 +29,8 @@ SigmaPlayer.prototype.loadVideoSources = function (sources) {
             this.autoQuality = false;
             this.videoSources = sources;
         }
+        // Если в объекте переданы субтитры, сохраняем их
+        this.subtitleData = sources.subtitle ? sources.subtitle : [];
     } else {
         console.error('Неверный формат источников видео.');
         return;

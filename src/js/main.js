@@ -407,6 +407,8 @@ SigmaPlayer.prototype.selectSeasonEpisode = function (season, episode) {
         this.autoQuality = false;
     }
     this.options.audioNames = episodeData.audioNames || null;
+    // Добавляем данные субтитров (если есть)
+    this.subtitleData = episodeData.subtitle || [];
     // Сброс выбранной озвучки
     this.selectedTranslation = null;
     // Перезапускаем логику выбора озвучки/качества

@@ -143,7 +143,6 @@ function createControlsUI(wrapper, playerInstance) {
     volumeMenu.appendChild(volumeSlider);
     volumeContainer.appendChild(volumeMenu);
     controlsInner.appendChild(volumeContainer);
-
     // --- Настройки (dropdown) ---
     const dropdown = document.createElement('div');
     dropdown.className = 'sigma__dropdown';
@@ -162,7 +161,7 @@ function createControlsUI(wrapper, playerInstance) {
     const settingsMain = document.createElement('div');
     settingsMain.className = 'sigma__settings-main';
 
-    // Создание пункта "Скорость" с иконкой справа
+    // Создание пункта "Скорость"
     const speedItem = document.createElement('div');
     speedItem.className = 'sigma__menu-item';
     speedItem.dataset.menu = 'speed';
@@ -172,7 +171,7 @@ function createControlsUI(wrapper, playerInstance) {
     speedItem.appendChild(arrow1);
     settingsMain.appendChild(speedItem);
 
-    // Создание пункта "Озвучка" с иконкой справа
+    // Создание пункта "Озвучка"
     const translationItem = document.createElement('div');
     translationItem.className = 'sigma__menu-item';
     translationItem.dataset.menu = 'translation';
@@ -182,7 +181,7 @@ function createControlsUI(wrapper, playerInstance) {
     translationItem.appendChild(arrow2);
     settingsMain.appendChild(translationItem);
 
-    // Создание пункта "Качество" с иконкой справа
+    // Создание пункта "Качество"
     const qualityItem = document.createElement('div');
     qualityItem.className = 'sigma__menu-item';
     qualityItem.dataset.menu = 'quality';
@@ -191,6 +190,16 @@ function createControlsUI(wrapper, playerInstance) {
     arrow3.classList.add('sigma__menu-arrow');
     qualityItem.appendChild(arrow3);
     settingsMain.appendChild(qualityItem);
+
+    // --- Новый пункт "Субтитры" ---
+    const subtitleItem = document.createElement('div');
+    subtitleItem.className = 'sigma__menu-item';
+    subtitleItem.dataset.menu = 'subtitle';
+    subtitleItem.textContent = 'Субтитры';
+    const arrow4 = getIcon('sigma-chevron-right');
+    arrow4.classList.add('sigma__menu-arrow');
+    subtitleItem.appendChild(arrow4);
+    settingsMain.appendChild(subtitleItem);
 
     // Подменю
     const settingsSubmenu = document.createElement('div');
@@ -210,6 +219,9 @@ function createControlsUI(wrapper, playerInstance) {
     });
     qualityItem.addEventListener('click', () => {
         playerInstance.showSubmenu('quality');
+    });
+    subtitleItem.addEventListener('click', () => {
+        playerInstance.showSubmenu('subtitle');
     });
 
     // --- Полноэкранный режим ---
